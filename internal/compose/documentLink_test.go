@@ -41,6 +41,24 @@ func TestDocumentLink(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "dockerfile attribute in build section",
+			content: `services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ../backend.Dockerfile`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 4, Character: 18},
+						End:   protocol.Position{Line: 4, Character: 38},
+					},
+					Target:  types.CreateStringPointer(fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "../backend.Dockerfile")), "/"))),
+					Tooltip: types.CreateStringPointer(filepath.Join(testsFolder, "../backend.Dockerfile")),
+				},
+			},
+		},
 	}
 
 	for _, tc := range testCases {
