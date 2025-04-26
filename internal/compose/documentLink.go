@@ -23,7 +23,6 @@ func DocumentLink(ctx context.Context, documentURI protocol.URI, document docume
 
 	links := []protocol.DocumentLink{}
 	rootNode := document.RootNode()
-	log.Printf("RootNode: %+v", rootNode)
 	for _, serviceNode := range rootNode.Content {
 		if serviceNode.Kind == yaml.MappingNode {
 			for i := 0; i < len(serviceNode.Content); i += 2 {
