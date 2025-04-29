@@ -207,7 +207,7 @@ var BakeSchema = &schema.BodySchema{
 										Constraint: schema.AnyExpression{OfType: cty.String},
 									},
 									"dest": {
-										IsOptional: true,
+										IsOptional: false,
 										Constraint: schema.AnyExpression{OfType: cty.String},
 									},
 								},
