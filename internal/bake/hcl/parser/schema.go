@@ -198,7 +198,10 @@ var BakeSchema = &schema.BodySchema{
 					},
 					"output": {
 						IsOptional: true,
-						Constraint: schema.List{Elem: schema.AnyExpression{OfType: cty.String}},
+						Constraint: schema.OneOf{
+							schema.List{Elem: schema.AnyExpression{OfType: cty.String}},
+							schema.List{Elem: schema.Map{Elem: schema.LiteralType{Type: cty.String}}},
+						},
 					},
 					"platforms": {
 						IsOptional: true,
