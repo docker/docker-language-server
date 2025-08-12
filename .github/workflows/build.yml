@@ -210,7 +210,7 @@ jobs:
         # Extract the version from the first ## header in CHANGELOG.md
         run: |
           NEW_VERSION=$(grep -m 1 "^## \[" CHANGELOG.md | sed 's/^## \[\([^]]*\)\].*/\1/')
-          echo "New version (${{ github.event.inputs.version_type }}): $NEW_VERSION"
+          echo "New version: $NEW_VERSION"
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate release notes
