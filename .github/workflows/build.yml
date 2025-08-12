@@ -268,12 +268,12 @@ jobs:
 
       - name: Rename the binary to include the version number
         run: |
-          mv docker-language-server-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
+          mv docker-language-server-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }} docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-v${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
 
       - uses: actions/upload-artifact@v4
         with:
-          name: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
-          path: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
+          name: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-v${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
+          path: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-v${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
           if-no-files-found: error
 
       - uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8 https://github.com/softprops/action-gh-release/commit/c062e08bd532815e2082a85e87e3ef29c3e6d191
@@ -281,5 +281,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ steps.set-variables.outputs.VERSION }}
-          files: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
+          files: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-v${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
           fail_on_unmatched_files: true
