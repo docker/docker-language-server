@@ -2,6 +2,14 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Bake
+  - textDocument/completion
+    - check the type of the block before suggesting items ([#422](https://github.com/docker/docker-language-server/issues/422))
+
 ## [0.16.0] - 2025-08-12
 
 ### Added
