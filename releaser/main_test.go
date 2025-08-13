@@ -41,8 +41,8 @@ func TestUpdateChangelog(t *testing.T) {
 
 func TestGenerateReleaseNotes(t *testing.T) {
 	// relative to releaser directory, going up to repository root)
-	changelogPath := "../CHANGELOG.md"
-	expectedPath := "../testdata/releaser/RELEASE.md"
+	changelogPath := "../testdata/releaser/CHANGELOG.md"
+	expectedPath := "../testdata/releaser/RELEASE.expected.md"
 
 	expectedLines, err := readFileLines(expectedPath)
 	require.NoError(t, err, "failed to read expected file: %v", expectedPath)
