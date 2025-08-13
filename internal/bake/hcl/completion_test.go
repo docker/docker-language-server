@@ -367,6 +367,20 @@ func TestCompletion(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:      "inherits attribute should not suggest anything in a variable block",
+			content:   "variable \"var\" {\n  inherits = [\"\"]\n}\ntarget \"base\" {}",
+			line:      1,
+			character: 15,
+			items:     []protocol.CompletionItem{},
+		},
+		{
+			name:      "network attribute should not suggest anything in a variable block",
+			content:   "variable \"var\" {\n  network = \"\"\n}\ntarget \"base\" {}",
+			line:      1,
+			character: 13,
+			items:     []protocol.CompletionItem{},
+		},
 	}
 
 	bakeFilePath := filepath.Join(completionTestFolderPath, "docker-bake.hcl")

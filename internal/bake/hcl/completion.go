@@ -36,7 +36,7 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 	}
 
 	for _, b := range body.Blocks {
-		if isInsideBodyRangeLines(b.Body, int(params.Position.Line)+1) {
+		if b.Type == "target" && isInsideBodyRangeLines(b.Body, int(params.Position.Line)+1) {
 			attributes := b.Body.Attributes
 			if attribute, ok := attributes["inherits"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
 				if tupleConsExpr, ok := attribute.Expr.(*hclsyntax.TupleConsExpr); ok {
