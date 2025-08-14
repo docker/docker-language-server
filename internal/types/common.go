@@ -3,6 +3,7 @@ package types
 import (
 	"fmt"
 	"net/url"
+	"os"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -112,4 +113,24 @@ func CreateDefinitionResult(definitionLinkSupport bool, targetRange protocol.Ran
 			TargetURI:            linkURI,
 		},
 	}
+}
+
+func FileStructureCompletionItems(folder string, hideFiles bool) []protocol.CompletionItem {
+	if folder != "" {
+		items := []protocol.CompletionItem{}
+		entries, _ := os.ReadDir(folder)
+		for _, entry := range entries {
+			if entry.IsDir() {
+				item := protocol.CompletionItem{Label: entry.Name()}
+				item.Kind = CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder)
+				items = append(items, item)
+			} else if !hideFiles {
+				item := protocol.CompletionItem{Label: entry.Name()}
+				item.Kind = CreateCompletionItemKindPointer(protocol.CompletionItemKindFile)
+				items = append(items, item)
+			}
+		}
+		return items
+	}
+	return nil
 }
