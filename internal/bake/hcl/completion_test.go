@@ -443,6 +443,31 @@ target t1 {
 			line:      2,
 			character: 12,
 		},
+		{
+			name: "contexts attribute in a target block",
+			content: `
+target t1 {
+	contexts = {
+		src = "%v"
+	}
+}`,
+			hideFiles: true,
+			line:      3,
+			character: 9,
+		},
+		{
+			name: "contexts attribute in a target block with multiple contexts",
+			content: `
+target t1 {
+	contexts = {
+		src = "../path/to/source"
+		src2 = "%v"
+	}
+}`,
+			hideFiles: true,
+			line:      4,
+			character: 10,
+		},
 	}
 
 	setups := []struct {
