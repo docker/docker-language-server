@@ -70,11 +70,22 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 			}
 
 			if attribute, ok := attributes["dockerfile"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
-				return fileStructureCompletionItems(bakeDocument, attribute, params.Position.Character, false)
+				return fileStructureCompletionItems(bakeDocument, attribute.Expr, params.Position.Character, false)
 			}
 
 			if attribute, ok := attributes["context"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
-				return fileStructureCompletionItems(bakeDocument, attribute, params.Position.Character, true)
+				return fileStructureCompletionItems(bakeDocument, attribute.Expr, params.Position.Character, true)
+			}
+
+			if attribute, ok := attributes["contexts"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
+				if expr, ok := attribute.Expr.(*hclsyntax.ObjectConsExpr); ok {
+					for _, item := range expr.Items {
+						if isInsideRange(item.ValueExpr.Range(), params.Position) {
+							return fileStructureCompletionItems(bakeDocument, item.ValueExpr, params.Position.Character, true)
+						}
+					}
+				}
+				return nil, nil
 			}
 
 			dockerfileURI, dockerfilePath, err := bakeDocument.DockerfileForTarget(b)
@@ -166,9 +177,9 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 	return list, nil
 }
 
-func fileStructureCompletionItems(bakeDocument document.BakeHCLDocument, attribute *hclsyntax.Attribute, character protocol.UInteger, hideFiles bool) (*protocol.CompletionList, error) {
-	if expr, ok := attribute.Expr.(*hclsyntax.TemplateExpr); ok && len(expr.Parts) == 1 {
-		if literal, ok := expr.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
+func fileStructureCompletionItems(bakeDocument document.BakeHCLDocument, expression hclsyntax.Expression, character protocol.UInteger, hideFiles bool) (*protocol.CompletionList, error) {
+	if templateExpr, ok := expression.(*hclsyntax.TemplateExpr); ok && len(templateExpr.Parts) == 1 {
+		if literal, ok := templateExpr.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
 			path, err := bakeDocument.DocumentPath()
 			if err == nil {
 				value, _ := literal.Value(&hcl.EvalContext{})
