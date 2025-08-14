@@ -424,7 +424,7 @@ func TestCompletion_FileStructure(t *testing.T) {
 		character uint32
 	}{
 		{
-			name: "services - context attribute under a build object",
+			name: "dockerfile attribute in a target block",
 			content: `
 target t1 {
 	dockerfile = "%v"
@@ -432,6 +432,16 @@ target t1 {
 			hideFiles: false,
 			line:      2,
 			character: 15,
+		},
+		{
+			name: "context attribute in a target block",
+			content: `
+target t1 {
+	context = "%v"
+}`,
+			hideFiles: true,
+			line:      2,
+			character: 12,
 		},
 	}
 
