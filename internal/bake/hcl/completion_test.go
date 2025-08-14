@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
@@ -414,6 +415,140 @@ func TestCompletion(t *testing.T) {
 	}
 }
 
+func TestCompletion_FileStructure(t *testing.T) {
+	testCases := []struct {
+		name      string
+		content   string
+		hideFiles bool
+		line      uint32
+		character uint32
+	}{
+		{
+			name: "services - context attribute under a build object",
+			content: `
+target t1 {
+	dockerfile = "%v"
+}`,
+			hideFiles: false,
+			line:      2,
+			character: 15,
+		},
+	}
+
+	setups := []struct {
+		description  string
+		content      string
+		offset       uint32
+		result       *protocol.CompletionList
+		folderResult *protocol.CompletionList
+	}{
+		{
+			description: "no prefix",
+			content:     "",
+			offset:      0,
+			result: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "a.txt",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFile),
+					},
+					{
+						Label: "b",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+					{
+						Label: "folder",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+				},
+			},
+			folderResult: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "b",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+					{
+						Label: "folder",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+				},
+			},
+		},
+		{
+			description: "./ prefix",
+			content:     "./",
+			offset:      2,
+			result: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "a.txt",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFile),
+					},
+					{
+						Label: "b",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+					{
+						Label: "folder",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+				},
+			},
+			folderResult: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "b",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+					{
+						Label: "folder",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder),
+					},
+				},
+			},
+		},
+		{
+			description: "./folder/ prefix",
+			content:     "./folder/",
+			offset:      9,
+			result: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "subfile.txt",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFile),
+					},
+				},
+			},
+			folderResult: nil,
+		},
+	}
+
+	dir := createFileStructure(t)
+	bakeFileURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(dir, "docker-bake.hcl")), "/"))
+
+	for _, tc := range testCases {
+		for _, setup := range setups {
+			t.Run(fmt.Sprintf("%v (%v)", tc.name, setup.description), func(t *testing.T) {
+				manager := document.NewDocumentManager()
+				doc := document.NewBakeHCLDocument(uri.URI(bakeFileURI), 1, []byte(fmt.Sprintf(tc.content, setup.content)))
+				list, err := Completion(context.Background(), &protocol.CompletionParams{
+					TextDocumentPositionParams: protocol.TextDocumentPositionParams{
+						TextDocument: protocol.TextDocumentIdentifier{URI: bakeFileURI},
+						Position:     protocol.Position{Line: tc.line, Character: tc.character + setup.offset},
+					},
+				}, manager, doc)
+				require.NoError(t, err)
+				if tc.hideFiles {
+					require.Equal(t, setup.folderResult, list)
+				} else {
+					require.Equal(t, setup.result, list)
+				}
+			})
+		}
+	}
+}
+
 func TestCompletion_WSL(t *testing.T) {
 	testCases := []struct {
 		name              string
@@ -575,4 +710,32 @@ func TestIsInsideRange(t *testing.T) {
 			require.Equal(t, tc.isInside, isInsideRange(tc.hclRange, tc.position))
 		})
 	}
+}
+
+func createFileStructure(t *testing.T) string {
+	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), time.Now().UnixMilli()))
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, os.RemoveAll(dir))
+	})
+
+	fileStructure := []struct {
+		name  string
+		isDir bool
+	}{
+		{name: "a.txt", isDir: false},
+		{name: "b", isDir: true},
+		{name: "folder", isDir: true},
+		{name: "folder/subfile.txt", isDir: false},
+	}
+	for _, entry := range fileStructure {
+		if entry.isDir {
+			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0755))
+		} else {
+			f, err := os.Create(filepath.Join(dir, entry.name))
+			require.NoError(t, err)
+			require.NoError(t, f.Close())
+		}
+	}
+	return dir
 }

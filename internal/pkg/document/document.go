@@ -38,6 +38,18 @@ func NewDocument(mgr *Manager, u uri.URI, identifier protocol.LanguageIdentifier
 	return NewDockerfileDocument(u, version, input)
 }
 
+func DirectoryForPrefix(documentPath DocumentPath, prefix, defaultValue string, prefixRequired bool) string {
+	idx := strings.LastIndex(prefix, "/")
+	if idx == -1 {
+		if prefixRequired {
+			return defaultValue
+		}
+		return documentPath.Folder
+	}
+	_, folder := types.Concatenate(documentPath.Folder, prefix[0:idx], documentPath.WSLDollarSignHost)
+	return folder
+}
+
 type document struct {
 	uri        uri.URI
 	identifier protocol.LanguageIdentifier

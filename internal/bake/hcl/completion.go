@@ -9,6 +9,7 @@ import (
 	"github.com/docker/docker-language-server/internal/bake/hcl/parser"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
+	"github.com/docker/docker-language-server/internal/types"
 	"github.com/hashicorp/hcl-lang/decoder"
 	"github.com/hashicorp/hcl-lang/lang"
 	"github.com/hashicorp/hcl/v2"
@@ -64,6 +65,27 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 								{Label: "none"},
 							},
 						}, nil
+					}
+				}
+			}
+
+			if attribute, ok := attributes["dockerfile"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
+				if expr, ok := attribute.Expr.(*hclsyntax.TemplateExpr); ok && len(expr.Parts) == 1 {
+					if literal, ok := expr.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
+						path, err := bakeDocument.DocumentPath()
+						if err == nil {
+							value, _ := literal.Value(&hcl.EvalContext{})
+							dockerfile := value.AsString()
+							offset := int(params.Position.Character) - (literal.SrcRange.Start.Column - 1)
+							prefix := ""
+							if offset > 0 && len(dockerfile) >= offset {
+								prefix = dockerfile[0:offset]
+							}
+							folder := document.DirectoryForPrefix(path, prefix, path.Folder, false)
+							list := &protocol.CompletionList{}
+							list.Items = types.FileStructureCompletionItems(folder, false)
+							return list, nil
+						}
 					}
 				}
 			}
