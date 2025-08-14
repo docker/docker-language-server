@@ -70,24 +70,11 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 			}
 
 			if attribute, ok := attributes["dockerfile"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
-				if expr, ok := attribute.Expr.(*hclsyntax.TemplateExpr); ok && len(expr.Parts) == 1 {
-					if literal, ok := expr.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
-						path, err := bakeDocument.DocumentPath()
-						if err == nil {
-							value, _ := literal.Value(&hcl.EvalContext{})
-							dockerfile := value.AsString()
-							offset := int(params.Position.Character) - (literal.SrcRange.Start.Column - 1)
-							prefix := ""
-							if offset > 0 && len(dockerfile) >= offset {
-								prefix = dockerfile[0:offset]
-							}
-							folder := document.DirectoryForPrefix(path, prefix, path.Folder, false)
-							list := &protocol.CompletionList{}
-							list.Items = types.FileStructureCompletionItems(folder, false)
-							return list, nil
-						}
-					}
-				}
+				return fileStructureCompletionItems(bakeDocument, attribute, params.Position.Character, false)
+			}
+
+			if attribute, ok := attributes["context"]; ok && isInsideRange(attribute.Expr.Range(), params.Position) {
+				return fileStructureCompletionItems(bakeDocument, attribute, params.Position.Character, true)
 			}
 
 			dockerfileURI, dockerfilePath, err := bakeDocument.DockerfileForTarget(b)
@@ -177,6 +164,31 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 		list.Items = append(list.Items, item)
 	}
 	return list, nil
+}
+
+func fileStructureCompletionItems(bakeDocument document.BakeHCLDocument, attribute *hclsyntax.Attribute, character protocol.UInteger, hideFiles bool) (*protocol.CompletionList, error) {
+	if expr, ok := attribute.Expr.(*hclsyntax.TemplateExpr); ok && len(expr.Parts) == 1 {
+		if literal, ok := expr.Parts[0].(*hclsyntax.LiteralValueExpr); ok {
+			path, err := bakeDocument.DocumentPath()
+			if err == nil {
+				value, _ := literal.Value(&hcl.EvalContext{})
+				dockerfile := value.AsString()
+				offset := int(character) - (literal.SrcRange.Start.Column - 1)
+				prefix := ""
+				if offset > 0 && len(dockerfile) >= offset {
+					prefix = dockerfile[0:offset]
+				}
+				folder := document.DirectoryForPrefix(path, prefix, path.Folder, false)
+				items := types.FileStructureCompletionItems(folder, hideFiles)
+				if len(items) > 0 {
+					list := &protocol.CompletionList{}
+					list.Items = types.FileStructureCompletionItems(folder, hideFiles)
+					return list, nil
+				}
+			}
+		}
+	}
+	return nil, nil
 }
 
 func isInsideBodyRangeLines(body *hclsyntax.Body, line int) bool {

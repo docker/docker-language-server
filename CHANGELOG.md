@@ -9,6 +9,7 @@ All notable changes to the Docker Language Server will be documented in this fil
 - Bake
   - textDocument/completion
     - provide local file and folder name suggestions ([#414](https://github.com/docker/docker-language-server/issues/414))
+      - `context` attribute in a `target` block
       - `dockerfile` attribute in a `target` block
 
 ### Fixed
