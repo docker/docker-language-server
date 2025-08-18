@@ -8,10 +8,12 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/docker/docker-language-server/internal/hub"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
 	"github.com/goccy/go-yaml/ast"
+	"github.com/goccy/go-yaml/token"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 )
 
@@ -177,7 +179,7 @@ func calculateTopLevelNodeOffset(file *ast.File) int {
 	return -1
 }
 
-func Completion(ctx context.Context, params *protocol.CompletionParams, manager *document.Manager, doc document.ComposeDocument) (*protocol.CompletionList, error) {
+func Completion(ctx context.Context, params *protocol.CompletionParams, manager *document.Manager, hub *hub.Service, doc document.ComposeDocument) (*protocol.CompletionList, error) {
 	documentPath, err := doc.DocumentPath()
 	if err != nil {
 		return nil, fmt.Errorf("LSP client sent invalid URI: %v", params.TextDocument.URI)
@@ -240,6 +242,10 @@ func Completion(ctx context.Context, params *protocol.CompletionParams, manager 
 	items, stop := buildTargetCompletionItems(params, manager, path, documentPath, prefixLength)
 	if stop {
 		return &protocol.CompletionList{Items: items}, nil
+	}
+	items, stop = serviceImageCompletionItems(*hub, path, prefixContent)
+	if stop {
+		return &protocol.CompletionList{Items: sortItems(items)}, nil
 	}
 	folderStructureItems := folderStructureCompletionItems(documentPath, path, removeQuote(prefixContent))
 	if len(folderStructureItems) > 0 {
@@ -357,10 +363,15 @@ func createSchemaItems(params *protocol.CompletionParams, nodeProps any, lines [
 	return items
 }
 
-func processItems(items []protocol.CompletionItem, arrayPrefix bool) *protocol.CompletionList {
+func sortItems(items []protocol.CompletionItem) []protocol.CompletionItem {
 	slices.SortFunc(items, func(a, b protocol.CompletionItem) int {
 		return strings.Compare(a.Label, b.Label)
 	})
+	return items
+}
+
+func processItems(items []protocol.CompletionItem, arrayPrefix bool) *protocol.CompletionList {
+	items = sortItems(items)
 	if arrayPrefix {
 		for i := range items {
 			if edit, ok := items[i].TextEdit.(protocol.TextEdit); ok {
@@ -565,6 +576,45 @@ func buildTargetCompletionItems(params *protocol.CompletionParams, manager *docu
 					}
 				}
 			}
+		}
+	}
+	return nil, false
+}
+
+func hubRepositoryImage(imageValue string) (repository, image, tagPrefix string) {
+	idx := strings.Index(imageValue, ":")
+	if idx == -1 {
+		return "", "", ""
+	}
+	slashIndex := strings.Index(imageValue, "/")
+	if slashIndex != strings.LastIndex(imageValue, "/") {
+		return "", "", ""
+	}
+	split := strings.Split(imageValue[0:idx], "/")
+	if len(split) == 1 {
+		return "library", split[0], imageValue[idx+1:]
+	}
+	return split[0], split[1], imageValue[idx+1:]
+}
+
+func serviceImageCompletionItems(hub hub.Service, path []*ast.MappingValueNode, prefix string) ([]protocol.CompletionItem, bool) {
+	if len(path) == 3 && path[0].Key.GetToken().Value == "services" && path[2].Key.GetToken().Value == "image" {
+		if path[2].Value.GetToken().Type == token.DoubleQuoteType || path[2].Value.GetToken().Type == token.SingleQuoteType {
+			prefix = prefix[1:]
+		}
+		repository, image, tagPrefix := hubRepositoryImage(prefix)
+		if repository != "" {
+			tags, _ := hub.GetTags(repository, image)
+			items := []protocol.CompletionItem{}
+			for _, tag := range tags {
+				if strings.HasPrefix(tag, tagPrefix) {
+					items = append(items, protocol.CompletionItem{
+						Label: tag,
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					})
+				}
+			}
+			return items, true
 		}
 	}
 	return nil, false

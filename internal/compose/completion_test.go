@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/docker/docker-language-server/internal/hub"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
@@ -2861,13 +2862,14 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})
@@ -4027,13 +4029,14 @@ models:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, nil, doc)
+			}, nil, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})
@@ -4397,6 +4400,7 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			if tc.dockerfileContent != "" {
 				u := dockerfileURI
 				if tc.dockerfileURI != "" {
@@ -4412,7 +4416,7 @@ services:
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list(), list)
 		})
@@ -4525,6 +4529,7 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			changed, err := manager.Write(context.Background(), uri.URI(dockerfileURI), protocol.DockerfileLanguage, 1, []byte(tc.dockerfileContent))
 			require.NoError(t, err)
 			require.True(t, changed)
@@ -4534,7 +4539,7 @@ services:
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list(), list)
 		})
@@ -4586,13 +4591,14 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})
@@ -4719,13 +4725,14 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})
@@ -4974,13 +4981,14 @@ services:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})
@@ -5248,13 +5256,14 @@ include:
 		for _, setup := range setups {
 			t.Run(fmt.Sprintf("%v (%v)", tc.name, setup.description), func(t *testing.T) {
 				manager := document.NewDocumentManager()
+				hub := hub.NewService()
 				doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content+setup.content))
 				list, err := Completion(context.Background(), &protocol.CompletionParams{
 					TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 						TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 						Position:     protocol.Position{Line: tc.line, Character: tc.character + setup.offset},
 					},
-				}, manager, doc)
+				}, manager, &hub, doc)
 				require.NoError(t, err)
 				if tc.hideFiles {
 					require.Equal(t, setup.folderResult, list)
@@ -5330,13 +5339,126 @@ include:
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			manager := document.NewDocumentManager()
+			hub := hub.NewService()
 			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
 			list, err := Completion(context.Background(), &protocol.CompletionParams{
 				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
 					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
 					Position:     protocol.Position{Line: tc.line, Character: tc.character},
 				},
-			}, manager, doc)
+			}, manager, &hub, doc)
+			require.NoError(t, err)
+			require.Equal(t, tc.list, list)
+		})
+	}
+}
+
+func TestCompletion_ImageTags(t *testing.T) {
+	testCases := []struct {
+		name      string
+		content   string
+		line      uint32
+		character uint32
+		list      *protocol.CompletionList
+	}{
+		{
+			name: "docker/lsp:g",
+			content: `
+services:
+  test:
+    image: docker/lsp:g`,
+			line:      3,
+			character: 23,
+			list: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "golang",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					},
+				},
+			},
+		},
+		{
+			name: "'docker/lsp:g'",
+			content: `
+services:
+  test:
+    image: 'docker/lsp:g'`,
+			line:      3,
+			character: 24,
+			list: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "golang",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					},
+				},
+			},
+		},
+		{
+			name: "\"docker/lsp:g\"",
+			content: `
+services:
+  test:
+    image: "docker/lsp:g"`,
+			line:      3,
+			character: 24,
+			list: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "golang",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					},
+				},
+			},
+		},
+		{
+			name: "ubuntu:20.",
+			content: `
+services:
+  test:
+    image: ubuntu:20.`,
+			line:      3,
+			character: 21,
+			list: &protocol.CompletionList{
+				Items: []protocol.CompletionItem{
+					{
+						Label: "20.04",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					},
+					{
+						Label: "20.10",
+						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
+					},
+				},
+			},
+		},
+		{
+			name: "text is correct but cursor not in the right place",
+			content: `
+services:
+  test:
+    image: docker/lsp:g`,
+			line:      3,
+			character: 15,
+			list:      nil,
+		},
+	}
+
+	dir := createFileStructure(t)
+	composeFileURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(dir, "compose.yaml")), "/"))
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			manager := document.NewDocumentManager()
+			hub := hub.NewService()
+			doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(tc.content))
+			list, err := Completion(context.Background(), &protocol.CompletionParams{
+				TextDocumentPositionParams: protocol.TextDocumentPositionParams{
+					TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
+					Position:     protocol.Position{Line: tc.line, Character: tc.character},
+				},
+			}, manager, &hub, doc)
 			require.NoError(t, err)
 			require.Equal(t, tc.list, list)
 		})

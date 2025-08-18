@@ -12,6 +12,7 @@ import (
 	"github.com/docker/docker-language-server/internal/bake/hcl"
 	"github.com/docker/docker-language-server/internal/compose"
 	"github.com/docker/docker-language-server/internal/configuration"
+	"github.com/docker/docker-language-server/internal/hub"
 	"github.com/docker/docker-language-server/internal/pkg/buildkit"
 	"github.com/docker/docker-language-server/internal/pkg/cli/metadata"
 	"github.com/docker/docker-language-server/internal/pkg/document"
@@ -34,6 +35,7 @@ type Server struct {
 	gs   *server.Server
 	docs *document.Manager
 
+	hubService   *hub.Service
 	scoutService scout.Service
 
 	// sessionTelemetryProperties contains a map of values that should
@@ -75,6 +77,7 @@ type Server struct {
 }
 
 func NewServer(docManager *document.Manager) *Server {
+	hubService := hub.NewService()
 	scoutService := scout.NewService()
 	handler := protocol.Handler{}
 	sessionTelemetryProperties := make(map[string]string)
@@ -88,6 +91,7 @@ func NewServer(docManager *document.Manager) *Server {
 		gs:                         server.NewServer(&handler, "", false),
 		initialized:                false,
 		telemetry:                  telemetry.NewClient(),
+		hubService:                 &hubService,
 		scoutService:               scoutService,
 		sessionTelemetryProperties: sessionTelemetryProperties,
 		composeSupport:             true,

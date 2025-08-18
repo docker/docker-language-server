@@ -19,7 +19,7 @@ func (s *Server) TextDocumentCompletion(ctx *glsp.Context, params *protocol.Comp
 	if doc.LanguageIdentifier() == protocol.DockerBakeLanguage {
 		return hcl.Completion(ctx.Context, params, s.docs, doc.(document.BakeHCLDocument))
 	} else if doc.LanguageIdentifier() == protocol.DockerComposeLanguage && s.composeSupport && s.composeCompletion {
-		return compose.Completion(ctx.Context, params, s.docs, doc.(document.ComposeDocument))
+		return compose.Completion(ctx.Context, params, s.docs, s.hubService, doc.(document.ComposeDocument))
 	}
 	return nil, nil
 }

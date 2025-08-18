@@ -108,7 +108,7 @@ func (c *TelemetryClientImpl) Publish(ctx context.Context) (int, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", fmt.Sprintf("dockerfile-language-server/v%v", metadata.Version))
+	req.Header.Set("User-Agent", fmt.Sprintf("docker-language-server/v%v", metadata.Version))
 	req.Header.Set("x-api-key", apiKey)
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
