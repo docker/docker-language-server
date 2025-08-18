@@ -6,6 +6,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ### Added
 
+- Compose
+  - textDocument/completion
+    - suggest image tags for images from Docker Hub ([#375](https://github.com/docker/docker-language-server/issues/375))
 - Bake
   - textDocument/completion
     - provide local file and folder name suggestions ([#414](https://github.com/docker/docker-language-server/issues/414))

@@ -59,7 +59,7 @@ func (c LanguageGatewayClientImpl) PostImage(ctx context.Context, jwt, image str
 	}
 
 	req.Header.Set("Authorization", "Bearer "+jwt)
-	req.Header.Set("User-Agent", fmt.Sprintf("dockerfile-language-server/v%v", metadata.Version))
+	req.Header.Set("User-Agent", fmt.Sprintf("docker-language-server/v%v", metadata.Version))
 	res, err := c.client.Do(req)
 	if err != nil {
 		err := fmt.Errorf("failed to send HTTP request: %w", err)
