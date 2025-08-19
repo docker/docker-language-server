@@ -134,3 +134,25 @@ func FileStructureCompletionItems(folder string, hideFiles bool) []protocol.Comp
 	}
 	return nil
 }
+
+func HubRepositoryImage(imageValue string) (repository, image, tag string) {
+	// ignore images with a SHA digest
+	if strings.Contains(imageValue, "@") {
+		return "", "", ""
+	}
+	// ignore images in another repository
+	slashIndex := strings.Index(imageValue, "/")
+	if slashIndex != strings.LastIndex(imageValue, "/") {
+		return "", "", ""
+	}
+	// ignore images without an explicit tag
+	idx := strings.Index(imageValue, ":")
+	if idx == -1 {
+		return "", "", ""
+	}
+	split := strings.Split(imageValue[0:idx], "/")
+	if len(split) == 1 {
+		return "library", split[0], imageValue[idx+1:]
+	}
+	return split[0], split[1], imageValue[idx+1:]
+}

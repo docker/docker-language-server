@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/docker/docker-language-server/internal/bake/hcl"
 	"github.com/docker/docker-language-server/internal/compose"
+	"github.com/docker/docker-language-server/internal/dockerfile"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
@@ -19,6 +20,8 @@ func (s *Server) TextDocumentInlayHint(ctx *glsp.Context, params *protocol.Inlay
 		return compose.InlayHint(doc.(document.ComposeDocument), params.Range)
 	} else if doc.LanguageIdentifier() == protocol.DockerBakeLanguage {
 		return hcl.InlayHint(s.docs, doc.(document.BakeHCLDocument), params.Range)
+	} else if doc.LanguageIdentifier() == protocol.DockerfileLanguage {
+		return dockerfile.InlayHint(*s.hubService, doc.(document.DockerfileDocument), params.Range)
 	}
 	return nil, nil
 }

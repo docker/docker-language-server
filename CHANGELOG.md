@@ -6,6 +6,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ### Added
 
+- Dockerfile
+  - textDocument/inlayHint
+    - show when an image was last pushed ([#431](https://github.com/docker/docker-language-server/issues/431))
 - Compose
   - textDocument/completion
     - suggest image tags for images from Docker Hub ([#375](https://github.com/docker/docker-language-server/issues/375))

@@ -581,35 +581,19 @@ func buildTargetCompletionItems(params *protocol.CompletionParams, manager *docu
 	return nil, false
 }
 
-func hubRepositoryImage(imageValue string) (repository, image, tagPrefix string) {
-	idx := strings.Index(imageValue, ":")
-	if idx == -1 {
-		return "", "", ""
-	}
-	slashIndex := strings.Index(imageValue, "/")
-	if slashIndex != strings.LastIndex(imageValue, "/") {
-		return "", "", ""
-	}
-	split := strings.Split(imageValue[0:idx], "/")
-	if len(split) == 1 {
-		return "library", split[0], imageValue[idx+1:]
-	}
-	return split[0], split[1], imageValue[idx+1:]
-}
-
 func serviceImageCompletionItems(hub hub.Service, path []*ast.MappingValueNode, prefix string) ([]protocol.CompletionItem, bool) {
 	if len(path) == 3 && path[0].Key.GetToken().Value == "services" && path[2].Key.GetToken().Value == "image" {
 		if path[2].Value.GetToken().Type == token.DoubleQuoteType || path[2].Value.GetToken().Type == token.SingleQuoteType {
 			prefix = prefix[1:]
 		}
-		repository, image, tagPrefix := hubRepositoryImage(prefix)
+		repository, image, tagPrefix := types.HubRepositoryImage(prefix)
 		if repository != "" {
 			tags, _ := hub.GetTags(repository, image)
 			items := []protocol.CompletionItem{}
 			for _, tag := range tags {
-				if strings.HasPrefix(tag, tagPrefix) {
+				if strings.HasPrefix(tag.Name, tagPrefix) {
 					items = append(items, protocol.CompletionItem{
-						Label: tag,
+						Label: tag.Name,
 						Kind:  types.CreateCompletionItemKindPointer(protocol.CompletionItemKindModule),
 					})
 				}

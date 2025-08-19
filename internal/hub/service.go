@@ -5,21 +5,20 @@ import (
 )
 
 type Service interface {
-	GetTags(repository, image string) ([]string, error)
+	GetTags(repository, image string) ([]TagResult, error)
 }
 
 type ServiceImpl struct {
-	tagsManager cache.CacheManager[[]string]
+	tagResultManager cache.CacheManager[[]TagResult]
 }
 
 func NewService() Service {
 	client := NewHubClient()
-	tf := NewHubTagsFetcher(client)
 	return &ServiceImpl{
-		tagsManager: cache.NewManager(tf),
+		tagResultManager: cache.NewManager(NewHubTagResultsFetcher(client)),
 	}
 }
 
-func (s *ServiceImpl) GetTags(repository, image string) ([]string, error) {
-	return s.tagsManager.Get(HubTagsKey{Repository: repository, Image: image})
+func (s *ServiceImpl) GetTags(repository, image string) ([]TagResult, error) {
+	return s.tagResultManager.Get(HubTagsKey{Repository: repository, Image: image})
 }
