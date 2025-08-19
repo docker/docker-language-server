@@ -12,7 +12,8 @@ import (
 )
 
 type TagResult struct {
-	Name string `json:"name"`
+	Name          string `json:"name"`
+	TagLastPushed string `json:"tag_last_pushed"`
 }
 
 type TagsResponse struct {
@@ -24,17 +25,17 @@ type HubClientImpl struct {
 	client http.Client
 }
 
-type HubFetcherImpl struct {
+type HubTagResultsFetcherImpl struct {
 	hubClient *HubClientImpl
 }
 
 const getTagsUrl = "https://hub.docker.com/v2/namespaces/%v/repositories/%v/tags?page_size=100"
 
-func NewHubTagsFetcher(hubClient *HubClientImpl) cache.Fetcher[[]string] {
-	return &HubFetcherImpl{hubClient: hubClient}
+func NewHubTagResultsFetcher(hubClient *HubClientImpl) cache.Fetcher[[]TagResult] {
+	return &HubTagResultsFetcherImpl{hubClient: hubClient}
 }
 
-func (f *HubFetcherImpl) Fetch(key cache.Key) ([]string, error) {
+func (f *HubTagResultsFetcherImpl) Fetch(key cache.Key) ([]TagResult, error) {
 	if k, ok := key.(HubTagsKey); ok {
 		return f.hubClient.GetTags(context.Background(), k.Repository, k.Image)
 	}
@@ -49,17 +50,8 @@ func NewHubClient() *HubClientImpl {
 	}
 }
 
-func (c *HubClientImpl) GetTags(ctx context.Context, repository, image string) ([]string, error) {
-	results, err := c.GetTagsFromURL(ctx, fmt.Sprintf(getTagsUrl, repository, image))
-	if err != nil {
-		return nil, err
-	}
-
-	tags := make([]string, len(results))
-	for i := range results {
-		tags[i] = results[i].Name
-	}
-	return tags, nil
+func (c *HubClientImpl) GetTags(ctx context.Context, repository, image string) ([]TagResult, error) {
+	return c.GetTagsFromURL(ctx, fmt.Sprintf(getTagsUrl, repository, image))
 }
 
 func (c *HubClientImpl) GetTagsFromURL(ctx context.Context, url string) ([]TagResult, error) {
