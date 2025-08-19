@@ -115,7 +115,7 @@ func (c *TelemetryClientImpl) Publish(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("failed to send telemetry request: %w", err)
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	if res.StatusCode >= 400 {
 		return 0, fmt.Errorf("telemetry http request failed (%v status code)", res.StatusCode)
 	}

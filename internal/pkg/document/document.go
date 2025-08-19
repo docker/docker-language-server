@@ -30,9 +30,10 @@ type Document interface {
 type NewDocumentFunc func(mgr *Manager, u uri.URI, identifier protocol.LanguageIdentifier, version int32, input []byte) Document
 
 func NewDocument(mgr *Manager, u uri.URI, identifier protocol.LanguageIdentifier, version int32, input []byte) Document {
-	if identifier == protocol.DockerBakeLanguage {
+	switch identifier {
+	case protocol.DockerBakeLanguage:
 		return NewBakeHCLDocument(u, version, input)
-	} else if identifier == protocol.DockerComposeLanguage {
+	case protocol.DockerComposeLanguage:
 		return NewComposeDocument(mgr, u, version, input)
 	}
 	return NewDockerfileDocument(u, version, input)
@@ -89,7 +90,7 @@ func (d *document) DocumentPath() (DocumentPath, error) {
 			idx := strings.LastIndex(path, "/")
 			return DocumentPath{Folder: path[0:idx], FileName: path[idx+1:], WSLDollarSignHost: true}, nil
 		}
-		return DocumentPath{}, fmt.Errorf("Invalid URI: %v", uriString)
+		return DocumentPath{}, fmt.Errorf("invalid URI: %v", uriString)
 	}
 	folder, err := types.AbsoluteFolder(url)
 	idx := strings.LastIndex(uriString, "/")

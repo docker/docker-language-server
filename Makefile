@@ -21,7 +21,7 @@ test-docker-disconnected: build-docker-test
 
 .PHONY: lint
 lint:
-	golangci-lint run --exclude-dirs internal/tliron
+	golangci-lint run
 
 .PHONY: install
 install:

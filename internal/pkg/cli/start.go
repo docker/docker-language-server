@@ -56,9 +56,9 @@ For socket mode, pass the --address option.
 	if err != nil {
 		panic(err)
 	}
-	cmd.Command.Example = example.String()
+	cmd.Example = example.String()
 
-	cmd.Command.RunE = func(cc *cobra.Command, args []string) error {
+	cmd.RunE = func(cc *cobra.Command, args []string) error {
 		ctx := cc.Context()
 		if cmd.address != "" {
 			err = runSocketServer(ctx, cmd.address)

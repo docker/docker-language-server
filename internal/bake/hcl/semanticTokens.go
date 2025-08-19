@@ -104,20 +104,22 @@ func SemanticTokensFull(ctx context.Context, doc document.BakeHCLDocument, filen
 	bytes := doc.Input()
 	rawTokens, _ := hclsyntax.LexConfig(bytes, "", hcl.InitialPos)
 	for _, rawToken := range rawTokens {
-		if rawToken.Type == hclsyntax.TokenIdent {
+		switch rawToken.Type {
+		case hclsyntax.TokenIdent:
 			if string(bytes[rawToken.Range.Start.Byte:rawToken.Range.End.Byte]) == "null" {
 				tokens = append(tokens, lang.SemanticToken{
 					Type:  lang.TokenKeyword,
 					Range: rawToken.Range,
 				})
 			}
-		} else if rawToken.Type == hclsyntax.TokenComment {
-			if rawToken.Range.Start.Line == rawToken.Range.End.Line {
+		case hclsyntax.TokenComment:
+			switch rawToken.Range.Start.Line {
+			case rawToken.Range.End.Line:
 				tokens = append(tokens, lang.SemanticToken{
 					Type:  TokenType_Comment,
 					Range: rawToken.Range,
 				})
-			} else if rawToken.Range.Start.Line == rawToken.Range.End.Line-1 {
+			case rawToken.Range.End.Line - 1:
 				switch bytes[rawToken.Range.Start.Byte] {
 				case 35:
 					// comment with a #
@@ -130,7 +132,7 @@ func SemanticTokensFull(ctx context.Context, doc document.BakeHCLDocument, filen
 						tokens = append(tokens, convertMultilineCommentTokens(bytes, rawToken)...)
 					}
 				}
-			} else {
+			default:
 				// more than one line must be a multi-line comment
 				tokens = append(tokens, convertMultilineCommentTokens(bytes, rawToken)...)
 			}
@@ -309,7 +311,8 @@ func convertMultilineCommentTokens(bytes []byte, token hclsyntax.Token) []lang.S
 	line := token.Range.Start.Line
 	start := token.Range.Start.Byte
 	for i := token.Range.Start.Byte; i < token.Range.End.Byte; i++ {
-		if bytes[i] == 13 {
+		switch bytes[i] {
+		case 13:
 			if i == start {
 				column = 1
 				start = i + 2
@@ -318,7 +321,7 @@ func convertMultilineCommentTokens(bytes []byte, token hclsyntax.Token) []lang.S
 			} else {
 				start++
 			}
-		} else if bytes[i] == 10 {
+		case 10:
 			if i == start {
 				column = 1
 				start = i + 1
