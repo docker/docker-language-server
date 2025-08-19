@@ -12,6 +12,8 @@ All notable changes to the Docker Language Server will be documented in this fil
 - Compose
   - textDocument/completion
     - suggest image tags for images from Docker Hub ([#375](https://github.com/docker/docker-language-server/issues/375))
+  - textDocument/documentLink
+    - support providing links for the `env_file` attribute of a service object  ([#436](https://github.com/docker/docker-language-server/issues/436))
 - Bake
   - textDocument/completion
     - provide local file and folder name suggestions ([#414](https://github.com/docker/docker-language-server/issues/414))
