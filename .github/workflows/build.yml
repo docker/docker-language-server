@@ -104,7 +104,7 @@ jobs:
       - name: Run unit tests
         env:
           DOCKER_LANGUAGE_SERVER_WINDOWS_CI: true
-        run: go test -timeout 30s github.com/docker/docker-language-server/internal/bake/hcl github.com/docker/docker-language-server/internal/bake/hcl/parser github.com/docker/docker-language-server/internal/compose github.com/docker/docker-language-server/internal/pkg/buildkit github.com/docker/docker-language-server/internal/pkg/document github.com/docker/docker-language-server/internal/scout github.com/docker/docker-language-server/internal/telemetry github.com/docker/docker-language-server/internal/types  github.com/docker/docker-language-server/releaser
+        run: go test -timeout 30s github.com/docker/docker-language-server/internal/bake/hcl github.com/docker/docker-language-server/internal/bake/hcl/parser github.com/docker/docker-language-server/internal/compose github.com/docker/docker-language-server/internal/dockerfile github.com/docker/docker-language-server/internal/pkg/buildkit github.com/docker/docker-language-server/internal/pkg/document github.com/docker/docker-language-server/internal/scout github.com/docker/docker-language-server/internal/telemetry github.com/docker/docker-language-server/internal/types  github.com/docker/docker-language-server/releaser
 
       - name: Run e2e tests
         env:
