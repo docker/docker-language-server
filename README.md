@@ -43,6 +43,10 @@ Ensure you have Go 1.24 or greater installed, check out this repository and then
 
 Run `make build` to generate a binary of the Docker Language Server.
 
+### Linting
+
+The Docker Language Server uses `golangci-lint` to lint the project. Run `make lint` to lint the project for issues.
+
 ### Testing
 
 Run `make test` to run the unit tests. If the BuildKit tests do not work, make sure that `docker buildx build` works from the command line.

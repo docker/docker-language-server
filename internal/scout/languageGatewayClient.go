@@ -66,7 +66,7 @@ func (c LanguageGatewayClientImpl) PostImage(ctx context.Context, jwt, image str
 		return ImageResponse{}, err
 	}
 
-	defer res.Body.Close()
+	defer func() { _ = res.Body.Close() }()
 	if res.StatusCode != 200 {
 		err := fmt.Errorf("http request failed (%v status code)", res.StatusCode)
 		return ImageResponse{}, err

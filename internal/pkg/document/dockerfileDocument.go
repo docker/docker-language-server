@@ -25,9 +25,9 @@ func NewDockerfileDocument(u uri.URI, version int32, input []byte) DockerfileDoc
 			input:      input,
 		},
 	}
-	doc.document.copyFn = doc.copy
-	doc.document.parseFn = doc.parse
-	doc.document.parseFn(true)
+	doc.copyFn = doc.copy
+	doc.parseFn = doc.parse
+	doc.parseFn(true)
 	return doc
 }
 
@@ -38,7 +38,7 @@ type dockerfileDocument struct {
 }
 
 func (d *dockerfileDocument) Nodes() []*parser.Node {
-	d.document.parseFn(false)
+	d.parseFn(false)
 	if d.result == nil {
 		return nil
 	}
@@ -122,7 +122,7 @@ func compareNodes(n1, n2 *parser.Node) bool {
 }
 
 func (d *dockerfileDocument) Instruction(p protocol.Position) *parser.Node {
-	d.document.parseFn(false)
+	d.parseFn(false)
 	if d.result != nil {
 		for _, instruction := range d.result.AST.Children {
 			if instruction.StartLine <= int(p.Line+1) && int(p.Line+1) <= instruction.EndLine {
