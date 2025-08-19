@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24.3"
+          go-version: "1.25"
 
       - uses: golangci/golangci-lint-action@v6
         with:
@@ -100,7 +100,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24.3"
+          go-version: "1.25"
 
       - name: Run unit tests
         env:
@@ -129,7 +129,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24.3"
+          go-version: "1.25"
 
       - uses: actions/setup-node@v4
         with:
@@ -178,7 +178,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24.3"
+          go-version: "1.25"
 
       - name: Build for ${{ matrix.os }}-${{ matrix.arch }}
         run: |
@@ -203,7 +203,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Extract new version from changelog
         id: version
@@ -253,7 +253,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.24"
+          go-version: "1.25"
 
       - name: Set variables
         id: set-variables
