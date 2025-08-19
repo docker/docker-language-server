@@ -84,8 +84,8 @@ func createImageLink(serviceNode *ast.MappingValueNode) *protocol.DocumentLink {
 	return nil
 }
 
-func createLabelFileLink(folderAbsolutePath string, wslDollarSign bool, serviceNode *ast.MappingValueNode) []protocol.DocumentLink {
-	if resolveAnchor(serviceNode.Key).GetToken().Value == "label_file" {
+func createFileLinks(folderAbsolutePath string, wslDollarSign bool, serviceNode *ast.MappingValueNode, attributeName string) []protocol.DocumentLink {
+	if resolveAnchor(serviceNode.Key).GetToken().Value == attributeName {
 		if sequence, ok := resolveAnchor(serviceNode.Value).(*ast.SequenceNode); ok {
 			links := []protocol.DocumentLink{}
 			for _, node := range sequence.Values {
@@ -203,7 +203,10 @@ func scanForLinks(folderAbsolutePath string, wslDollarSign bool, n *ast.MappingV
 								links = append(links, *link)
 							}
 
-							labelFileLinks := createLabelFileLink(folderAbsolutePath, wslDollarSign, serviceAttribute)
+							envFileLinks := createFileLinks(folderAbsolutePath, wslDollarSign, serviceAttribute, "env_file")
+							links = append(links, envFileLinks...)
+
+							labelFileLinks := createFileLinks(folderAbsolutePath, wslDollarSign, serviceAttribute, "label_file")
 							links = append(links, labelFileLinks...)
 						}
 					}

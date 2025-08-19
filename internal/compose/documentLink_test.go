@@ -1350,6 +1350,220 @@ services:
 	}
 }
 
+func TestDocumentLink_ServiceEnvFileLinks(t *testing.T) {
+	testsFolder := filepath.Join(os.TempDir(), t.Name())
+	composeStringURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "compose.yaml")), "/"))
+
+	testCases := []struct {
+		name      string
+		content   string
+		path      string
+		linkRange protocol.Range
+	}{
+		{
+			name: "string value app.labels",
+			content: `
+services:
+  test:
+    env_file: .env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 18},
+			},
+		},
+		{
+			name: "string value ./.env",
+			content: `
+services:
+  test:
+    env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 20},
+			},
+		},
+		{
+			name: "quoted string value \"./.env\"",
+			content: `
+services:
+  test:
+    env_file: "./.env"`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 15},
+				End:   protocol.Position{Line: 3, Character: 21},
+			},
+		},
+		{
+			name: "attribute value is null",
+			content: `
+services:
+  test:
+    env_file: null`,
+		},
+		{
+			name: "array items",
+			content: `
+services:
+  test:
+    env_file:
+      - ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 14},
+			},
+		},
+		{
+			name: "array item is null",
+			content: `
+services:
+  test:
+    env_file:
+      - null`,
+		},
+		{
+			name: "anchors and aliases to nothing",
+			content: `
+services:
+  test:
+    env_file: &anchor
+  test2:
+    env_file: *anchor`,
+		},
+		{
+			name: "anchor on the services object itself",
+			content: `
+&anchor services:
+  test:
+    env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 20},
+			},
+		},
+		{
+			name: "anchor on the services object's value",
+			content: `
+services: &anchor
+  test:
+    env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 20},
+			},
+		},
+		{
+			name: "anchor on the service object itself",
+			content: `
+services:
+  &anchor test:
+    env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 20},
+			},
+		},
+		{
+			name: "anchor on the service object's value",
+			content: `
+services:
+  test: &anchor
+    env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 14},
+				End:   protocol.Position{Line: 3, Character: 20},
+			},
+		},
+		{
+			name: "anchor on the service object's value as JSON",
+			content: `
+services:
+  test: &anchor { env_file: ./.env }`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 2, Character: 28},
+				End:   protocol.Position{Line: 2, Character: 34},
+			},
+		},
+		{
+			name: "anchor on the env_file string attribute itself",
+			content: `
+services:
+  test: &anchor
+    &anchor env_file: ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 22},
+				End:   protocol.Position{Line: 3, Character: 28},
+			},
+		},
+		{
+			name: "anchor on the env_file string attribute's value",
+			content: `
+services:
+  test: &anchor
+    env_file: &anchor ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 22},
+				End:   protocol.Position{Line: 3, Character: 28},
+			},
+		},
+		{
+			name: "anchor on the env_file array attribute's value",
+			content: `
+services:
+  test: &anchor
+    env_file: &anchor
+      - ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 14},
+			},
+		},
+		{
+			name: "anchor on the env_file array item's value",
+			content: `
+services:
+  test: &anchor
+    env_file:
+      - &anchor ./.env`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 16},
+				End:   protocol.Position{Line: 4, Character: 22},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mgr := document.NewDocumentManager()
+			doc := document.NewComposeDocument(mgr, uri.URI(composeStringURI), 1, []byte(tc.content))
+			links, err := DocumentLink(context.Background(), composeStringURI, doc)
+			require.NoError(t, err)
+			if tc.path == "" {
+				require.Equal(t, []protocol.DocumentLink{}, links)
+			} else {
+				link := protocol.DocumentLink{
+					Range:   tc.linkRange,
+					Target:  types.CreateStringPointer(fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(tc.path), "/"))),
+					Tooltip: types.CreateStringPointer(filepath.FromSlash(tc.path)),
+				}
+				require.Equal(t, []protocol.DocumentLink{link}, links)
+			}
+		})
+	}
+}
+
 func TestDocumentLink_ServiceExtendsFileLinks(t *testing.T) {
 	testsFolder := filepath.Join(os.TempDir(), t.Name())
 	composeStringURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "compose.yaml")), "/"))
