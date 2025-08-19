@@ -38,13 +38,13 @@ func NewComposeDocument(mgr *Manager, u uri.URI, version int32, input []byte) Co
 			// change all CRLF to LFs
 			// https://github.com/goccy/go-yaml/issues/560
 			// https://github.com/docker/docker-language-server/issues/205
-			input: []byte(strings.Replace(string(input), "\r\n", "\n", -1)),
+			input: []byte(strings.ReplaceAll(string(input), "\r\n", "\n")),
 		},
 		mgr: mgr,
 	}
-	doc.document.copyFn = doc.copy
-	doc.document.parseFn = doc.parse
-	doc.document.parseFn(true)
+	doc.copyFn = doc.copy
+	doc.parseFn = doc.parse
+	doc.parseFn(true)
 	return doc
 }
 
@@ -79,7 +79,7 @@ func isPath(path string) bool {
 }
 
 func searchForIncludedFiles(searched []uri.URI, d *composeDocument) (map[string]*ast.File, bool) {
-	documentPath, err := d.document.DocumentPath()
+	documentPath, err := d.DocumentPath()
 	if err != nil {
 		return nil, true
 	}

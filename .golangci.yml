@@ -1,0 +1,17 @@
+version: "2"
+linters:
+  # Defines a set of rules to ignore issues.
+  # It does not skip the analysis, and so does not ignore "typecheck" errors.
+  exclusions:
+    # Excluding configuration per-path, per-linter, per-text and per-source.
+    rules:
+      - path: internal/tliron
+        linters:
+          - errcheck
+          - staticcheck
+      - path: releaser
+        linters:
+          - errcheck
+      - path: e2e-tests
+        linters:
+          - errcheck

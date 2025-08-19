@@ -41,9 +41,9 @@ func NewBakeHCLDocument(u uri.URI, version int32, input []byte) BakeHCLDocument 
 			input:      input,
 		},
 	}
-	doc.document.copyFn = doc.copy
-	doc.document.parseFn = doc.parse
-	doc.document.parseFn(true)
+	doc.copyFn = doc.copy
+	doc.parseFn = doc.parse
+	doc.parseFn(true)
 	return doc
 }
 
@@ -59,8 +59,8 @@ func (d *bakeHCLDocument) parse(_ bool) bool {
 	d.mutex.Lock()
 	defer d.mutex.Unlock()
 
-	file, _ := hclsyntax.ParseConfig(d.document.input, string(d.document.uri), hcl.InitialPos)
-	decoder := decoder.NewDecoder(&parser.PathReaderImpl{Filename: string(d.document.uri), File: file})
+	file, _ := hclsyntax.ParseConfig(d.input, string(d.uri), hcl.InitialPos)
+	decoder := decoder.NewDecoder(&parser.PathReaderImpl{Filename: string(d.uri), File: file})
 	pd, _ := decoder.Path(lang.Path{})
 	pd.PrefillRequiredFields = true
 	d.decoder = pd
