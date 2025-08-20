@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"unicode"
 
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
@@ -39,13 +40,27 @@ func NewDocument(mgr *Manager, u uri.URI, identifier protocol.LanguageIdentifier
 	return NewDockerfileDocument(u, version, input)
 }
 
+// DirectoryForPrefix returns the parent directory to be used given the
+// document's path and the prefix string that has been inserted into the
+// document thus far.
+//
+// prefixRequired is true if prefix can just be a name without any
+// slashes or backslashes.
 func DirectoryForPrefix(documentPath DocumentPath, prefix, defaultValue string, prefixRequired bool) string {
 	idx := strings.LastIndex(prefix, "/")
 	if idx == -1 {
 		if prefixRequired {
+			if len(prefix) > 2 && unicode.IsLetter(rune(prefix[0])) && prefix[1] == ':' {
+				backslashIdx := strings.LastIndex(prefix, "\\")
+				if backslashIdx != -1 {
+					return prefix[0 : backslashIdx+1]
+				}
+			}
 			return defaultValue
 		}
 		return documentPath.Folder
+	} else if prefix[0] == '/' {
+		return prefix[0 : idx+1]
 	}
 	_, folder := types.Concatenate(documentPath.Folder, prefix[0:idx], documentPath.WSLDollarSignHost)
 	return folder

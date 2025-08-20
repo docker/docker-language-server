@@ -124,6 +124,10 @@ func FileStructureCompletionItems(folder string, hideFiles bool) []protocol.Comp
 				item := protocol.CompletionItem{Label: entry.Name()}
 				item.Kind = CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder)
 				items = append(items, item)
+			} else if entry.Type() == os.ModeSymlink {
+				item := protocol.CompletionItem{Label: entry.Name()}
+				item.Kind = CreateCompletionItemKindPointer(protocol.CompletionItemKindReference)
+				items = append(items, item)
 			} else if !hideFiles {
 				item := protocol.CompletionItem{Label: entry.Name()}
 				item.Kind = CreateCompletionItemKindPointer(protocol.CompletionItemKindFile)
