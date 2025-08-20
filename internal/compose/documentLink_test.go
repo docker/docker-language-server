@@ -397,6 +397,87 @@ include:
     - *anchor`,
 			links: []protocol.DocumentLink{},
 		},
+		{
+			name: "env_file string attribute",
+			content: `
+include:
+  - env_file: .env`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 2, Character: 14},
+						End:   protocol.Position{Line: 2, Character: 18},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+			},
+		},
+		{
+			name: "env_file string attribute with an anchor",
+			content: `
+include:
+  - env_file: &anchor .env`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 2, Character: 22},
+						End:   protocol.Position{Line: 2, Character: 26},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+			},
+		},
+		{
+			name: "env_file string attribute with an alias",
+			content: `
+include:
+  - env_file: *alias`,
+			links: []protocol.DocumentLink{},
+		},
+		{
+			name: "env_file array attribute",
+			content: `
+include:
+  - env_file:
+    - .env`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 6},
+						End:   protocol.Position{Line: 3, Character: 10},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+			},
+		},
+		{
+			name: "env_file array attribute with an anchor",
+			content: `
+include:
+  - env_file:
+    - &anchor .env`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 14},
+						End:   protocol.Position{Line: 3, Character: 18},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+			},
+		},
+		{
+			name: "env_file array attribute with an alias",
+			content: `
+include:
+  - env_file:
+    - *alias`,
+			links: []protocol.DocumentLink{},
+		},
 	}
 
 	for _, tc := range testCases {

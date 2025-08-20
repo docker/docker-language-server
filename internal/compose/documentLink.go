@@ -133,12 +133,16 @@ func includedPaths(nodes []ast.Node) []*token.Token {
 	for _, entry := range nodes {
 		if mappingNode, ok := resolveAnchor(entry).(*ast.MappingNode); ok {
 			for _, value := range mappingNode.Values {
-				if resolveAnchor(value.Key).GetToken().Value == "path" {
+				attributeName := resolveAnchor(value.Key).GetToken().Value
+				if attributeName == "path" || attributeName == "env_file" {
 					if paths, ok := resolveAnchor(value.Value).(*ast.SequenceNode); ok {
 						// include:
 						//   - path:
 						//     - ../commons/compose.yaml
 						//     - ./commons-override.yaml
+						//   - env_file:
+						//     - ../another/.env
+						//     - ../another/dev.env
 						for _, path := range paths.Values {
 							if _, ok := path.(*ast.AliasNode); !ok {
 								tokens = append(tokens, resolveAnchor(path).GetToken())
