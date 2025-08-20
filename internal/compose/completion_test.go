@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -4993,6 +4994,63 @@ services:
 			require.Equal(t, tc.list, list)
 		})
 	}
+}
+
+func testCompletion_RootFolder(t *testing.T, composeFileURI, rootDir, content string, line, character protocol.UInteger) {
+	entries, err := os.ReadDir(rootDir)
+	require.NoError(t, err, "could not read root directory %v", rootDir)
+	require.True(t, len(entries) > 0, "no entries in %v which makes it hard to validate this test", rootDir)
+	items := make([]protocol.CompletionItem, len(entries))
+	for i := range entries {
+		items[i] = protocol.CompletionItem{Label: entries[i].Name()}
+		if entries[i].IsDir() {
+			items[i].Kind = types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFolder)
+		} else if entries[i].Type() == os.ModeSymlink {
+			items[i].Kind = types.CreateCompletionItemKindPointer(protocol.CompletionItemKindReference)
+		} else {
+			items[i].Kind = types.CreateCompletionItemKindPointer(protocol.CompletionItemKindFile)
+		}
+	}
+
+	manager := document.NewDocumentManager()
+	hub := hub.NewService()
+	doc := document.NewComposeDocument(manager, uri.URI(composeFileURI), 1, []byte(content))
+	list, err := Completion(context.Background(), &protocol.CompletionParams{
+		TextDocumentPositionParams: protocol.TextDocumentPositionParams{
+			TextDocument: protocol.TextDocumentIdentifier{URI: composeFileURI},
+			Position:     protocol.Position{Line: line, Character: character},
+		},
+	}, manager, &hub, doc)
+	require.NoError(t, err)
+	require.Equal(t, &protocol.CompletionList{Items: items}, list)
+}
+
+func TestCompletion_RootFolder(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("skipping on windows as / is not a root folder on Windows")
+		return
+	}
+
+	composeFileURI := fmt.Sprintf("file://%v", filepath.Join(os.TempDir(), "compose.yaml"))
+	testCompletion_RootFolder(t, composeFileURI, "/", `
+services:
+  s:
+    volumes:
+      - /`, 4, 9)
+}
+
+func TestCompletion_WindowsRootFolder(t *testing.T) {
+	if runtime.GOOS != "windows" {
+		t.Skip("skipping on non-Windows systems as it will not have a C:\\ folder")
+		return
+	}
+
+	composeFileURI := fmt.Sprintf("file:///%v", filepath.Join(os.TempDir(), "compose.yaml"))
+	testCompletion_RootFolder(t, composeFileURI, "C:\\", `
+services:
+  s:
+    volumes:
+      - C:\`, 4, 11)
 }
 
 func TestCompletion_FileStructure(t *testing.T) {
