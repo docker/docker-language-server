@@ -24,6 +24,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ### Fixed
 
+- Dockerfile
+  - textDocument/hover
+    - ignore 4XX errors when hovering over images with a non-standard tag ([#371](https://github.com/docker/docker-language-server/issues/371))
 - Compose
   - textDocument/documentLink
     - stop returning links for alias nodes in included paths ([#439](https://github.com/docker/docker-language-server/issues/439))
