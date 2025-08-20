@@ -37,6 +37,43 @@ func findSymbols(value string, n *ast.MappingValueNode, mapping map[string]proto
 	return result
 }
 
+func includedFiles(nodes []ast.Node) []*token.Token {
+	tokens := []*token.Token{}
+	for _, entry := range nodes {
+		if mappingNode, ok := resolveAnchor(entry).(*ast.MappingNode); ok {
+			for _, value := range mappingNode.Values {
+				if resolveAnchor(value.Key).GetToken().Value == "path" {
+					if paths, ok := resolveAnchor(value.Value).(*ast.SequenceNode); ok {
+						// include:
+						//   - path:
+						//     - ../commons/compose.yaml
+						//     - ./commons-override.yaml
+						for _, path := range paths.Values {
+							tokens = append(tokens, resolveAnchor(path).GetToken())
+						}
+					} else {
+						// include:
+						// - path: ../commons/compose.yaml
+						//   project_directory: ..
+						//   env_file: ../another/.env
+						tokens = append(tokens, resolveAnchor(value.Value).GetToken())
+					}
+				}
+			}
+		} else {
+			// include:
+			//   - abc.yml
+			//   - def.yml
+			stringNode := stringNode(entry)
+			if stringNode != nil {
+				tokens = append(tokens, stringNode.GetToken())
+			}
+
+		}
+	}
+	return tokens
+}
+
 func DocumentSymbol(ctx context.Context, doc document.ComposeDocument) (result []any, err error) {
 	file := doc.File()
 	if file == nil || len(file.Docs) == 0 {

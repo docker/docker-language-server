@@ -128,7 +128,7 @@ func createModelLink(serviceNode *ast.MappingValueNode) *protocol.DocumentLink {
 	return nil
 }
 
-func includedFiles(nodes []ast.Node) []*token.Token {
+func includedPaths(nodes []ast.Node) []*token.Token {
 	tokens := []*token.Token{}
 	for _, entry := range nodes {
 		if mappingNode, ok := resolveAnchor(entry).(*ast.MappingNode); ok {
@@ -140,14 +140,18 @@ func includedFiles(nodes []ast.Node) []*token.Token {
 						//     - ../commons/compose.yaml
 						//     - ./commons-override.yaml
 						for _, path := range paths.Values {
-							tokens = append(tokens, resolveAnchor(path).GetToken())
+							if _, ok := path.(*ast.AliasNode); !ok {
+								tokens = append(tokens, resolveAnchor(path).GetToken())
+							}
 						}
 					} else {
 						// include:
 						// - path: ../commons/compose.yaml
 						//   project_directory: ..
 						//   env_file: ../another/.env
-						tokens = append(tokens, resolveAnchor(value.Value).GetToken())
+						if _, ok := value.Value.(*ast.AliasNode); !ok {
+							tokens = append(tokens, resolveAnchor(value.Value).GetToken())
+						}
 					}
 				}
 			}
@@ -171,7 +175,7 @@ func scanForLinks(folderAbsolutePath string, wslDollarSign bool, n *ast.MappingV
 		switch s.Value {
 		case "include":
 			if sequence, ok := resolveAnchor(n.Value).(*ast.SequenceNode); ok {
-				for _, token := range includedFiles(sequence.Values) {
+				for _, token := range includedPaths(sequence.Values) {
 					link := createLink(folderAbsolutePath, wslDollarSign, token)
 					if link != nil {
 						links = append(links, *link)
