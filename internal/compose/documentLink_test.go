@@ -382,6 +382,21 @@ include:
 				},
 			},
 		},
+		{
+			name: "alias on the path's string attribute",
+			content: `
+include:
+  - path: *anchor`,
+			links: []protocol.DocumentLink{},
+		},
+		{
+			name: "alias on the path attribute's string array item value",
+			content: `
+include:
+  - path:
+    - *anchor`,
+			links: []protocol.DocumentLink{},
+		},
 	}
 
 	for _, tc := range testCases {

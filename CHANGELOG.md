@@ -23,6 +23,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ### Fixed
 
+- Compose
+  - textDocument/documentLink
+    - stop returning links for alias nodes in included paths ([#439](https://github.com/docker/docker-language-server/issues/439))
 - Bake
   - textDocument/completion
     - check the type of the block before suggesting items ([#422](https://github.com/docker/docker-language-server/issues/422))
