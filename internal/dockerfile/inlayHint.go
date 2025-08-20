@@ -3,12 +3,12 @@ package dockerfile
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/docker/docker-language-server/internal/hub"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
+	"github.com/dromara/carbon/v2"
 )
 
 func InlayHint(hubService hub.Service, doc document.DockerfileDocument, rng protocol.Range) ([]protocol.InlayHint, error) {
@@ -27,12 +27,15 @@ func InlayHint(hubService hub.Service, doc document.DockerfileDocument, rng prot
 						for _, t := range tags {
 							if t.Name == tag {
 								if t.TagLastPushed != "" {
-									parsed, err := time.Parse(time.RFC3339Nano, t.TagLastPushed)
-									if err == nil {
+									c := carbon.Parse(t.TagLastPushed, carbon.Local)
+									if c != nil && c.IsValid() {
+										goTime := c.StdTime()
+										localFormat := goTime.Format("2006-01-02 15:04:05 MST")
 										hints = append(hints, protocol.InlayHint{
-											Label:       fmt.Sprintf("(last pushed on %v)", parsed.Format(time.DateOnly)),
+											Label:       fmt.Sprintf("(last pushed %v)", c.DiffForHumans()),
 											PaddingLeft: types.CreateBoolPointer(true),
 											Position:    protocol.Position{Line: line, Character: protocol.UInteger(len(lines[node.StartLine-1]))},
+											Tooltip:     types.CreateAnyPointer(localFormat),
 										})
 									}
 								}

@@ -6,6 +6,7 @@ require (
 	github.com/bep/debounce v1.2.1
 	github.com/bugsnag/bugsnag-go v2.5.1+incompatible
 	github.com/docker/buildx v0.26.1
+	github.com/dromara/carbon/v2 v2.6.11
 	github.com/go-git/go-git/v5 v5.14.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/hashicorp/hcl-lang v0.0.0-20250210193002-b2ec3be7c1b8
