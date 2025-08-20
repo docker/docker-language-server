@@ -12,6 +12,10 @@ func CreateDiagnosticSeverityPointer(ds protocol.DiagnosticSeverity) *protocol.D
 	return &ds
 }
 
+func CreateAnyPointer(a any) *any {
+	return &a
+}
+
 func CreateBoolPointer(b bool) *bool {
 	return &b
 }
