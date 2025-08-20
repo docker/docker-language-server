@@ -59,6 +59,7 @@ func (s *ServiceImpl) Hover(ctx context.Context, documentURI protocol.DocumentUr
 				},
 			}, nil
 		}
+		return nil, nil
 	}
 	return nil, err
 }

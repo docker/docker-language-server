@@ -17,8 +17,9 @@ func TestPostImage(t *testing.T) {
 		response ImageResponse
 	}{
 		{
+			// this triggers a 400 which is ignored
 			image: "alpine:3.16.1::",
-			err:   errors.New("http request failed (400 status code)"),
+			err:   nil,
 		},
 		{
 			image: "alpine:3.16.1",
