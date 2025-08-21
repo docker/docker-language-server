@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/bep/debounce v1.2.1
 	github.com/bugsnag/bugsnag-go v2.5.1+incompatible
+	github.com/compose-spec/compose-go/v2 v2.8.1
 	github.com/docker/buildx v0.26.1
 	github.com/dromara/carbon/v2 v2.6.11
 	github.com/go-git/go-git/v5 v5.14.0
@@ -47,7 +48,6 @@ require (
 	github.com/bugsnag/panicwrap v1.3.4 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cloudflare/circl v1.6.0 // indirect
-	github.com/compose-spec/compose-go/v2 v2.7.2-0.20250703132301-891fce532a51 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd/api v1.9.0 // indirect
 	github.com/containerd/containerd/v2 v2.1.3 // indirect
@@ -149,6 +149,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
+	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
 	golang.org/x/net v0.39.0 // indirect

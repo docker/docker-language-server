@@ -3,6 +3,8 @@ package compose
 import (
 	"strings"
 
+	"github.com/compose-spec/compose-go/v2/format"
+	"github.com/compose-spec/compose-go/v2/types"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/goccy/go-yaml/ast"
@@ -100,7 +102,11 @@ func volumeReferences(servicesNode *ast.MappingNode) []*token.Token {
 									}
 								}
 							} else {
-								tokens = append(tokens, volumeToken(volumeNode.GetToken()))
+								token := volumeNode.GetToken()
+								volumeConfig, err := format.ParseVolume(token.Value)
+								if err == nil && volumeConfig.Type == types.VolumeTypeVolume {
+									tokens = append(tokens, volumeToken(token))
+								}
 							}
 						}
 					} else if mappingNode, ok := volumesValue.(*ast.MappingNode); ok {
