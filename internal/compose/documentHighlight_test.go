@@ -2797,6 +2797,23 @@ services:
 		},
 	},
 	{
+		name: "read highlight on a volume's string array item with a bind mount",
+		content: `
+services:
+  test:
+    volumes:
+      - ./folder:/mount/path`,
+		line:      4,
+		character: 14,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges:    nil,
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return nil
+		},
+		prepareRename: nil,
+	},
+	{
 		name: "read highlight on an undefined volume array item's mount path",
 		content: `
 services:
