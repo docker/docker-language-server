@@ -29,8 +29,7 @@ func InlayHint(hubService hub.Service, doc document.DockerfileDocument, rng prot
 								if t.TagLastPushed != "" {
 									c := carbon.Parse(t.TagLastPushed, carbon.Local)
 									if c != nil && c.IsValid() {
-										goTime := c.StdTime()
-										localFormat := goTime.Format("2006-01-02 15:04:05 MST")
+										localFormat := c.Layout("2006-01-02 15:04:05 MST")
 										hints = append(hints, protocol.InlayHint{
 											Label:       fmt.Sprintf("(last pushed %v)", c.DiffForHumans()),
 											PaddingLeft: types.CreateBoolPointer(true),
