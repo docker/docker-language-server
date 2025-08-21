@@ -12,7 +12,7 @@ const ServerHeartbeatTypePanic = "panic"
 const ServerUserActionTypeCommandExecuted = "commandExecuted"
 const ServerUserActionTypeFileAnalyzed = "fileAnalyzed"
 
-type TelemetryPaylad struct {
+type TelemetryPayload struct {
 	Records []Record `json:"records"`
 }
 

@@ -96,7 +96,7 @@ func (c *TelemetryClientImpl) Publish(ctx context.Context) (int, error) {
 
 	records := c.trimRecords()
 
-	payload := &TelemetryPaylad{Records: records}
+	payload := &TelemetryPayload{Records: records}
 	b, err := json.Marshal(payload)
 	if err != nil {
 		return 0, fmt.Errorf("failed to marshal telemetry payload: %w", err)
