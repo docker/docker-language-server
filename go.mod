@@ -6,13 +6,13 @@ require (
 	github.com/bep/debounce v1.2.1
 	github.com/bugsnag/bugsnag-go v2.5.1+incompatible
 	github.com/compose-spec/compose-go/v2 v2.8.1
-	github.com/docker/buildx v0.26.1
+	github.com/docker/buildx v0.27.0
 	github.com/dromara/carbon/v2 v2.6.11
 	github.com/go-git/go-git/v5 v5.14.0
 	github.com/goccy/go-yaml v1.18.0
 	github.com/hashicorp/hcl-lang v0.0.0-20250210193002-b2ec3be7c1b8
 	github.com/hashicorp/hcl/v2 v2.23.0
-	github.com/moby/buildkit v0.23.0-rc1.0.20250618182037-9b91d20367db // master
+	github.com/moby/buildkit v0.23.0-rc1.0.20250806140246-955c2b2f7d01 // master
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.1
 	github.com/sourcegraph/jsonrpc2 v0.2.0
 	github.com/spf13/cobra v1.9.1
@@ -50,7 +50,7 @@ require (
 	github.com/cloudflare/circl v1.6.0 // indirect
 	github.com/containerd/console v1.0.5 // indirect
 	github.com/containerd/containerd/api v1.9.0 // indirect
-	github.com/containerd/containerd/v2 v2.1.3 // indirect
+	github.com/containerd/containerd/v2 v2.1.4 // indirect
 	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/containerd/errdefs v1.0.0 // indirect
 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
@@ -61,8 +61,8 @@ require (
 	github.com/cyphar/filepath-securejoin v0.4.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
-	github.com/docker/cli v28.3.2+incompatible // indirect
-	github.com/docker/docker v28.3.2+incompatible // indirect
+	github.com/docker/cli v28.3.3+incompatible // indirect
+	github.com/docker/docker v28.3.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.9.3 // indirect
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
