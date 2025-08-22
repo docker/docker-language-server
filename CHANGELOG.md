@@ -2,6 +2,18 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Compose
+  - textDocument/documentHighlight
+    - prevent file and folder bind mounts from returning results as they are not valid volume object references ([#450](https://github.com/docker/docker-language-server/issues/450))
+  - textDocument/prepareRename
+    - prevent file and folder bind mounts from returning results as they are not valid volume object references ([#450](https://github.com/docker/docker-language-server/issues/450))
+  - textDocument/rename
+    - prevent file and folder bind mounts from returning results as they are not valid volume object references ([#450](https://github.com/docker/docker-language-server/issues/450))
+
 ## [0.17.0] - 2025-08-21
 
 ### Added
