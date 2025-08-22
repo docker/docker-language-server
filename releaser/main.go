@@ -7,7 +7,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
+
+	"github.com/dromara/carbon/v2"
 )
 
 const localChangelogPath = "./CHANGELOG.md"
@@ -157,7 +158,7 @@ func bumpVersion(version, versionType string) (string, error) {
 }
 
 func today() string {
-	return time.Now().UTC().Format(time.DateOnly)
+	return carbon.Now().ToDateString()
 }
 
 func updateLinks(linkLines []string, newVersion, previousVersion string) []string {

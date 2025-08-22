@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/docker/docker-language-server/internal/configuration"
 	"github.com/docker/docker-language-server/internal/pkg/cli/metadata"
+	"github.com/dromara/carbon/v2"
 )
 
 const apiKey = "eIxc3dSmud2vuJRKiq9hJ6wORVWfoLxp1nqb4qXz"
@@ -65,7 +65,7 @@ func (c *TelemetryClientImpl) Enqueue(event string, properties map[string]any) {
 			Event:      event,
 			Source:     "editor_integration",
 			Properties: properties,
-			Timestamp:  int64(time.Now().UnixMilli()),
+			Timestamp:  carbon.Now().TimestampMilli(),
 		})
 	}
 }

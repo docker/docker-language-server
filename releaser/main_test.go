@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-	"time"
 
+	"github.com/dromara/carbon/v2"
 	"github.com/stretchr/testify/require"
 )
 
@@ -24,7 +24,7 @@ func TestUpdateChangelog(t *testing.T) {
 	expectedLines, err := readFileLines(expectedPath)
 	require.NoError(t, err, "failed to read expected file: %v", expectedPath)
 
-	today := time.Now().Format("2006-01-02")
+	today := carbon.Now().ToDateString()
 	expectedVersionLine := fmt.Sprintf("## [0.16.0] - %s", today)
 
 	for i := range resultLines {
