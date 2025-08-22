@@ -4,6 +4,18 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ## [Unreleased]
 
+### Added
+
+- Compose
+  - textDocument/definition
+    - support jumping to service references in the `volumes_from` attribute of a service object ([#452](https://github.com/docker/docker-language-server/issues/452))
+  - textDocument/documentHighlight
+    - support highlighting service references in the `volumes_from` attribute of a service object ([#452](https://github.com/docker/docker-language-server/issues/452))
+  - textDocument/prepareRename
+    - support preparing renames for services in the `volumes_from` attribute of a service object ([#452](https://github.com/docker/docker-language-server/issues/452))
+  - textDocument/rename
+    - support renaming service referencesin the `volumes_from` attribute of a service object ([#452](https://github.com/docker/docker-language-server/issues/452))
+
 ### Fixed
 
 - Compose
