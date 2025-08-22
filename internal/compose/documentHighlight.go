@@ -45,7 +45,8 @@ func extendedServiceReferences(servicesNode *ast.MappingNode) []*token.Token {
 	for _, serviceNode := range servicesNode.Values {
 		if serviceAttributes, ok := resolveAnchor(serviceNode.Value).(*ast.MappingNode); ok {
 			for _, attributeNode := range serviceAttributes.Values {
-				if resolveAnchor(attributeNode.Key).GetToken().Value == "extends" {
+				switch resolveAnchor(attributeNode.Key).GetToken().Value {
+				case "extends":
 					attributeNodeValue := resolveAnchor(attributeNode.Value)
 					if extendedValue, ok := attributeNodeValue.(*ast.StringNode); ok {
 						tokens = append(tokens, extendedValue.GetToken())
@@ -63,6 +64,22 @@ func extendedServiceReferences(servicesNode *ast.MappingNode) []*token.Token {
 								if resolveAnchor(extendsObjectAttribute.Key).GetToken().Value == "service" {
 									tokens = append(tokens, resolveAnchor(extendsObjectAttribute.Value).GetToken())
 								}
+							}
+						}
+					}
+				case "volumes_from":
+					if sequenceNode, ok := resolveAnchor(attributeNode.Value).(*ast.SequenceNode); ok {
+						for _, volume := range sequenceNode.Values {
+							volumeToken := resolveAnchor(volume).GetToken()
+							split := strings.Split(volumeToken.Value, ":")
+							if len(split) == 1 {
+								tokens = append(tokens, volumeToken)
+							} else if len(split[0]) > 0 && split[0] != "container" {
+								tokens = append(tokens, &token.Token{
+									Type:     volumeToken.Type,
+									Value:    split[0],
+									Position: volumeToken.Position,
+								})
 							}
 						}
 					}

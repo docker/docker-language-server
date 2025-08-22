@@ -1804,6 +1804,322 @@ services:
 		},
 	},
 	{
+		name: "undefined read highlight on a volumes_from array item",
+		content: `
+services:
+  test:
+    volumes_from:
+      - server`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 8},
+			End:   protocol.Position{Line: 4, Character: 14},
+		},
+	},
+	{
+		name: "undefined read highlight on a volumes_from array item (volumes_from attribute key is anchored)",
+		content: `
+services:
+  test:
+    &anchor volumes_from:
+      - server`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 8},
+			End:   protocol.Position{Line: 4, Character: 14},
+		},
+	},
+	{
+		name: "undefined read highlight on a volumes_from array item (volumes_from attribute value is anchored)",
+		content: `
+services:
+  test:
+    volumes_from: &anchor
+      - server`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 8},
+			End:   protocol.Position{Line: 4, Character: 14},
+		},
+	},
+	{
+		name: "undefined read highlight on a volumes_from array item (array item is anchored)",
+		content: `
+services:
+  test:
+    volumes_from:
+      - &anchor server`,
+		line:      4,
+		character: 18,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 16, 4, 22, protocol.DocumentHighlightKindRead),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 16},
+								End:   protocol.Position{Line: 4, Character: 22},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 16},
+			End:   protocol.Position{Line: 4, Character: 22},
+		},
+	},
+	{
+		name: "undefined read highlight on a volumes_from array item with a :ro suffix",
+		content: `
+services:
+  test:
+    volumes_from:
+      - server:ro`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 8},
+			End:   protocol.Position{Line: 4, Character: 14},
+		},
+	},
+	{
+		name: "read highlight on a volumes_from array item pointing to a service",
+		content: `
+services:
+  test:
+    volumes_from:
+      - server
+  server:`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any {
+			return types.CreateDefinitionResult(false, protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 2},
+				End:   protocol.Position{Line: 5, Character: 8},
+			}, nil, u)
+		},
+		links: func(u protocol.DocumentUri) any {
+			return types.CreateDefinitionResult(true, protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 2},
+				End:   protocol.Position{Line: 5, Character: 8},
+			}, &protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 14},
+			}, u)
+		},
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+			documentHighlight(5, 2, 5, 8, protocol.DocumentHighlightKindWrite),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 5, Character: 2},
+								End:   protocol.Position{Line: 5, Character: 8},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 4, Character: 8},
+			End:   protocol.Position{Line: 4, Character: 14},
+		},
+	},
+	{
+		name: "write highlight on a volumes_from array item pointing to a service",
+		content: `
+services:
+  test:
+    volumes_from:
+      - server
+  server:`,
+		line:      5,
+		character: 5,
+		locations: func(u protocol.DocumentUri) any {
+			return types.CreateDefinitionResult(false, protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 2},
+				End:   protocol.Position{Line: 5, Character: 8},
+			}, nil, u)
+		},
+		links: func(u protocol.DocumentUri) any {
+			return types.CreateDefinitionResult(true, protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 2},
+				End:   protocol.Position{Line: 5, Character: 8},
+			}, &protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 2},
+				End:   protocol.Position{Line: 5, Character: 8},
+			}, u)
+		},
+		ranges: []protocol.DocumentHighlight{
+			documentHighlight(4, 8, 4, 14, protocol.DocumentHighlightKindRead),
+			documentHighlight(5, 2, 5, 8, protocol.DocumentHighlightKindWrite),
+		},
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return &protocol.WorkspaceEdit{
+				Changes: map[protocol.DocumentUri][]protocol.TextEdit{
+					u: {
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 4, Character: 8},
+								End:   protocol.Position{Line: 4, Character: 14},
+							},
+						},
+						{
+							NewText: "newName",
+							Range: protocol.Range{
+								Start: protocol.Position{Line: 5, Character: 2},
+								End:   protocol.Position{Line: 5, Character: 8},
+							},
+						},
+					},
+				},
+			}
+		},
+		prepareRename: &protocol.Range{
+			Start: protocol.Position{Line: 5, Character: 2},
+			End:   protocol.Position{Line: 5, Character: 8},
+		},
+	},
+	{
+		name: "undefined read highlight on a volumes_from with no service just :ro",
+		content: `
+services:
+  test:
+    volumes_from:
+      - :ro`,
+		line:      4,
+		character: 8,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges:    nil,
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return nil
+		},
+		prepareRename: nil,
+	},
+	{
+		name: "undefined read highlight on a volumes_from array item pointing to a container",
+		content: `
+services:
+  test:
+    volumes_from:
+      - container:ro`,
+		line:      4,
+		character: 10,
+		locations: func(u protocol.DocumentUri) any { return nil },
+		links:     func(u protocol.DocumentUri) any { return nil },
+		ranges:    nil,
+		renameEdits: func(u protocol.DocumentUri) *protocol.WorkspaceEdit {
+			return nil
+		},
+		prepareRename: nil,
+	},
+	{
 		name: "invalid services value",
 		content: `
 services: true`,
