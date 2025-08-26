@@ -3,8 +3,12 @@ package compose
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 
+	"github.com/compose-spec/compose-go/v2/format"
+	composeTypes "github.com/compose-spec/compose-go/v2/types"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
@@ -102,6 +106,40 @@ func createFileLinks(folderAbsolutePath string, wslDollarSign bool, serviceNode 
 		}
 	}
 	return nil
+}
+
+func createVolumeFileLinks(folderAbsolutePath string, wslDollarSign bool, serviceNode *ast.MappingValueNode) []protocol.DocumentLink {
+	if resolveAnchor(serviceNode.Key).GetToken().Value == "volumes" {
+		if sequence, ok := resolveAnchor(serviceNode.Value).(*ast.SequenceNode); ok {
+			links := []protocol.DocumentLink{}
+			for _, node := range sequence.Values {
+				if s, ok := resolveAnchor(node).(*ast.StringNode); ok {
+					t := s.GetToken()
+					config, err := format.ParseVolume(t.Value)
+					if err == nil && config.Type == composeTypes.VolumeTypeBind {
+						uri, path := createLocalFileLink(folderAbsolutePath, config.Source, wslDollarSign)
+						info, err := os.Stat(path)
+						if err == nil && !info.IsDir() {
+							links = append(links, protocol.DocumentLink{
+								Range:   createRange(t, len(config.Source)),
+								Target:  types.CreateStringPointer(uri),
+								Tooltip: types.CreateStringPointer(path),
+							})
+						}
+					}
+				}
+			}
+			return links
+		}
+	}
+	return nil
+}
+
+func createLocalFileLink(folderAbsolutePath, fsPath string, wslDollarSign bool) (uri, path string) {
+	if filepath.IsAbs(fsPath) {
+		return fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(fsPath), "/")), fsPath
+	}
+	return types.Concatenate(folderAbsolutePath, fsPath, wslDollarSign)
 }
 
 func createObjectFileLink(folderAbsolutePath string, wslDollarSign bool, serviceNode *ast.MappingValueNode) *protocol.DocumentLink {
@@ -216,6 +254,9 @@ func scanForLinks(folderAbsolutePath string, wslDollarSign bool, n *ast.MappingV
 
 							labelFileLinks := createFileLinks(folderAbsolutePath, wslDollarSign, serviceAttribute, "label_file")
 							links = append(links, labelFileLinks...)
+
+							volumeFileLinks := createVolumeFileLinks(folderAbsolutePath, wslDollarSign, serviceAttribute)
+							links = append(links, volumeFileLinks...)
 						}
 					}
 				}
