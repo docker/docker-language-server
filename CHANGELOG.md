@@ -2,6 +2,14 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Compose
+  - textDocument/documentLink
+    - return document links for files referenced in the short-form `volumes` attribute of a service object ([#460](https://github.com/docker/docker-language-server/issues/460))
+
 ## [0.18.0] - 2025-08-25
 
 ### Added

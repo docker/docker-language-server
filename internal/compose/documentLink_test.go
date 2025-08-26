@@ -2035,6 +2035,118 @@ services:
 	}
 }
 
+func TestDocumentLink_VolumeFileLinks(t *testing.T) {
+	tempDir := os.TempDir()
+	tempFile := filepath.Join(tempDir, "tempFile.txt")
+	f, err := os.Create(tempFile)
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		require.NoError(t, f.Close())
+	})
+	testsFolder := createFileStructure(t)
+	composeStringURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "compose.yaml")), "/"))
+
+	testCases := []struct {
+		name      string
+		content   string
+		path      string
+		linkRange protocol.Range
+	}{
+		{
+			name: "mount local file",
+			content: `
+services:
+  test:
+    volumes:
+      - ./a.txt:/mount/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 15},
+			},
+		},
+		{
+			name: "mount local file (string is anchored)",
+			content: `
+services:
+  test:
+    volumes:
+      - &anchor ./a.txt:/mount/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 16},
+				End:   protocol.Position{Line: 4, Character: 23},
+			},
+		},
+		{
+			name: "mount local file (volumes attribute name is anchored)",
+			content: `
+services:
+  test:
+    &anchor volumes:
+      - ./a.txt:/mount/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 15},
+			},
+		},
+		{
+			name: "mount local file (volumes attribute value is anchored)",
+			content: `
+services:
+  test:
+    volumes: &anchor
+      - ./a.txt:/mount/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: 15},
+			},
+		},
+		{
+			name: "mount local folder",
+			content: `
+services:
+  test:
+    volumes:
+      - ./folder:/mount/folder`,
+		},
+		{
+			name: "absolute path",
+			content: fmt.Sprintf(`
+services:
+  test:
+    volumes:
+      - %v:/mount/file.txt`, tempFile),
+			path: tempFile,
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 8},
+				End:   protocol.Position{Line: 4, Character: protocol.UInteger(8 + len(tempFile))},
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			mgr := document.NewDocumentManager()
+			doc := document.NewComposeDocument(mgr, uri.URI(composeStringURI), 1, []byte(tc.content))
+			links, err := DocumentLink(context.Background(), composeStringURI, doc)
+			require.NoError(t, err)
+			if tc.path == "" {
+				require.Equal(t, []protocol.DocumentLink{}, links)
+			} else {
+				link := protocol.DocumentLink{
+					Range:   tc.linkRange,
+					Target:  types.CreateStringPointer(fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(tc.path), "/"))),
+					Tooltip: types.CreateStringPointer(filepath.FromSlash(tc.path)),
+				}
+				require.Equal(t, []protocol.DocumentLink{link}, links)
+			}
+		})
+	}
+}
+
 func TestDocumentLink_ConfigFileLinks(t *testing.T) {
 	testsFolder := filepath.Join(os.TempDir(), t.Name())
 	composeStringURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "compose.yaml")), "/"))
