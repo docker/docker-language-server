@@ -127,6 +127,32 @@ func createVolumeFileLinks(folderAbsolutePath string, wslDollarSign bool, servic
 							})
 						}
 					}
+				} else if m, ok := resolveAnchor(node).(*ast.MappingNode); ok {
+					bindType := false
+					for _, value := range m.Values {
+						if resolveAnchor(value.Key).GetToken().Value == "type" && resolveAnchor(value.Value).GetToken().Value == "bind" {
+							bindType = true
+							break
+						}
+					}
+
+					if bindType {
+						for _, value := range m.Values {
+							if resolveAnchor(value.Key).GetToken().Value == "source" {
+								sourceToken := resolveAnchor(value.Value).GetToken()
+								uri, path := createLocalFileLink(folderAbsolutePath, sourceToken.Value, wslDollarSign)
+								info, err := os.Stat(path)
+								if err == nil && !info.IsDir() {
+									links = append(links, protocol.DocumentLink{
+										Range:   createRange(sourceToken, len(sourceToken.Value)),
+										Target:  types.CreateStringPointer(uri),
+										Tooltip: types.CreateStringPointer(path),
+									})
+								}
+								break
+							}
+						}
+					}
 				}
 			}
 			return links
