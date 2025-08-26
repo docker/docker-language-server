@@ -2125,6 +2125,91 @@ services:
 				End:   protocol.Position{Line: 4, Character: protocol.UInteger(8 + len(tempFile))},
 			},
 		},
+		{
+			name: "mount local file with a complex volume object",
+			content: `
+services:
+  test:
+    volumes:
+      - type: bind
+        source: ./a.txt
+        target: /mnt/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 16},
+				End:   protocol.Position{Line: 5, Character: 23},
+			},
+		},
+		{
+			name: "mount local file with a complex volume object with the type's attribute name anchored",
+			content: `
+services:
+  test:
+    volumes:
+      - &anchor type: bind
+        source: ./a.txt
+        target: /mnt/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 16},
+				End:   protocol.Position{Line: 5, Character: 23},
+			},
+		},
+		{
+			name: "mount local file with a complex volume object with the type's attribute value anchored",
+			content: `
+services:
+  test:
+    volumes:
+      - type: &anchor bind
+        source: ./a.txt
+        target: /mnt/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 16},
+				End:   protocol.Position{Line: 5, Character: 23},
+			},
+		},
+		{
+			name: "mount local file with a complex volume object with the source's attribute name anchored",
+			content: `
+services:
+  test:
+    volumes:
+      - type: bind
+        &anchor source: ./a.txt
+        target: /mnt/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 24},
+				End:   protocol.Position{Line: 5, Character: 31},
+			},
+		},
+		{
+			name: "mount local file with a complex volume object with the source's attribute value anchored",
+			content: `
+services:
+  test:
+    volumes:
+      - type: bind
+        source: &anchor ./a.txt
+        target: /mnt/a.txt`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 24},
+				End:   protocol.Position{Line: 5, Character: 31},
+			},
+		},
+		{
+			name: "mount local folder with a complex volume object",
+			content: `
+services:
+  test:
+    volumes:
+      - type: bind
+        source: ./folder
+        target: /mount/folder`,
+		},
 	}
 
 	for _, tc := range testCases {
