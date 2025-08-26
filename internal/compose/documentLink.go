@@ -114,14 +114,14 @@ func createVolumeFileLinks(folderAbsolutePath string, wslDollarSign bool, servic
 			links := []protocol.DocumentLink{}
 			for _, node := range sequence.Values {
 				if s, ok := resolveAnchor(node).(*ast.StringNode); ok {
-					config, err := format.ParseVolume(s.GetToken().Value)
+					t := s.GetToken()
+					config, err := format.ParseVolume(t.Value)
 					if err == nil && config.Type == composeTypes.VolumeTypeBind {
 						uri, path := createLocalFileLink(folderAbsolutePath, config.Source, wslDollarSign)
 						info, err := os.Stat(path)
 						if err == nil && !info.IsDir() {
-							t := volumeToken(s.GetToken())
 							links = append(links, protocol.DocumentLink{
-								Range:   createRange(t, len(t.Value)),
+								Range:   createRange(t, len(config.Source)),
 								Target:  types.CreateStringPointer(uri),
 								Tooltip: types.CreateStringPointer(path),
 							})
