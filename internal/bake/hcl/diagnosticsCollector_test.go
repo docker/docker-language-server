@@ -358,6 +358,24 @@ target "build" {
 				},
 			},
 		},
+		{
+			name: "annotations attribute has no equals sign",
+			content: `
+target "t1" {
+  annotations = [ "abc" ]
+}`,
+			diagnostics: []protocol.Diagnostic{
+				{
+					Message:  `invalid annotation "abc", expected key=value`,
+					Source:   types.CreateStringPointer("docker-language-server"),
+					Severity: types.CreateDiagnosticSeverityPointer(protocol.DiagnosticSeverityError),
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 2, Character: 18},
+						End:   protocol.Position{Line: 2, Character: 23},
+					},
+				},
+			},
+		},
 	}
 
 	wd, err := os.Getwd()

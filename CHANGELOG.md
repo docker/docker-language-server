@@ -9,6 +9,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 - Dockerfile
   - textDocument/codeAction
     - `InvalidBaseImagePlatform` warnings can now be ignored with a code action ([#464](https://github.com/docker/docker-language-server/issues/464))
+- Bake
+  - textDocument/publishDiagnostics
+    - flag `annotations` in a `target` block without an equals sign as an error ([#99](https://github.com/docker/docker-language-server/issues/99))
 
 ### Fixed
 
