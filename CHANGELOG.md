@@ -4,6 +4,12 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ## [Unreleased]
 
+### Added
+
+- Dockerfile
+  - textDocument/codeAction
+    - `InvalidBaseImagePlatform` warnings can now be ignored with a code action ([#464](https://github.com/docker/docker-language-server/issues/464))
+
 ### Fixed
 
 - Compose

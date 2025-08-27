@@ -187,6 +187,8 @@ func createIgnoreEdit(ruleName string) *types.NamedEdit {
 		fallthrough
 	case "FromPlatformFlagConstDisallowed":
 		fallthrough
+	case "InvalidBaseImagePlatform":
+		fallthrough
 	case "InvalidDefaultArgInFrom":
 		fallthrough
 	case "InvalidDefinitionDescription":
