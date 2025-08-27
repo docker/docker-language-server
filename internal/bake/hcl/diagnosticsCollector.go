@@ -228,6 +228,26 @@ func (c *BakeHCLDiagnosticsCollector) CollectDiagnostics(source, workspaceFolder
 				}
 			}
 
+			if attribute, ok := block.Body.Attributes["annotations"]; ok {
+				if expr, ok := attribute.Expr.(*hclsyntax.TupleConsExpr); ok {
+					for _, e := range expr.Exprs {
+						if templateExpr, ok := e.(*hclsyntax.TemplateExpr); ok {
+							if templateExpr.IsStringLiteral() {
+								value, _ := templateExpr.Value(&hcl.EvalContext{})
+								if len(strings.Split(value.AsString(), "=")) < 2 {
+									diagnostics = append(diagnostics, protocol.Diagnostic{
+										Message:  fmt.Sprintf(`invalid annotation "%v", expected key=value`, value.AsString()),
+										Source:   types.CreateStringPointer(source),
+										Severity: types.CreateDiagnosticSeverityPointer(protocol.DiagnosticSeverityError),
+										Range:    createProtocolRange(templateExpr.SrcRange, false),
+									})
+								}
+							}
+						}
+					}
+				}
+			}
+
 			_, dockerfilePath, err := bakeDoc.DockerfileForTarget(block)
 			if dockerfilePath == "" || err != nil {
 				continue
