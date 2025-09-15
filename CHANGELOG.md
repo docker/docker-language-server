@@ -15,6 +15,9 @@ All notable changes to the Docker Language Server will be documented in this fil
 
 ### Fixed
 
+- Dockerfile
+  - textDocument/inlayHint
+    - handle inlay hints asynchronously so that it does not block other LSP messages when trying to fetch image data ([#467](https://github.com/docker/docker-language-server/issues/467))
 - Compose
   - textDocument/documentLink
     - return document links for files referenced in the short-form `volumes` attribute of a service object ([#460](https://github.com/docker/docker-language-server/issues/460))
