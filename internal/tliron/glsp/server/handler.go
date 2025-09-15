@@ -6,13 +6,34 @@ import (
 	"fmt"
 
 	"github.com/docker/docker-language-server/internal/tliron/glsp"
+	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/sourcegraph/jsonrpc2"
 )
+
+// AsynchronousRequestHandler will selectively process some JSON-RPC
+// messages asynchronously.
+type AsynchronousRequestHandler struct {
+	handler jsonrpc2.Handler
+}
+
+func asynchronousRequest(req *jsonrpc2.Request) bool {
+	// handle textDocument/inlayHint requests asynchronously
+	return !req.Notif && req.Method == protocol.MethodTextDocumentInlayHint
+}
+
+func (h *AsynchronousRequestHandler) Handle(ctx contextpkg.Context, conn *jsonrpc2.Conn, req *jsonrpc2.Request) {
+	if asynchronousRequest(req) {
+		go h.handler.Handle(ctx, conn, req)
+	} else {
+		// handle notifications synchronously so that the document changes do not overlap each other
+		h.handler.Handle(ctx, conn, req)
+	}
+}
 
 // See: https://github.com/sourcegraph/go-langserver/blob/master/langserver/handler.go#L206
 
 func (self *Server) newHandler() jsonrpc2.Handler {
-	return jsonrpc2.HandlerWithError(self.handle)
+	return &AsynchronousRequestHandler{handler: jsonrpc2.HandlerWithError(self.handle)}
 }
 
 func (self *Server) handle(context contextpkg.Context, connection *jsonrpc2.Conn, request *jsonrpc2.Request) (any, error) {
