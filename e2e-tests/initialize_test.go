@@ -46,7 +46,7 @@ func (ts *TestStream) Read(b []byte) (int, error) {
 		} else if err != io.EOF {
 			return r, err
 		}
-		time.Sleep(1 * time.Second)
+		time.Sleep(1 * time.Millisecond)
 	}
 }
 
