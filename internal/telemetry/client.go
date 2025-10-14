@@ -14,8 +14,6 @@ import (
 	"github.com/docker/docker-language-server/internal/pkg/cli/metadata"
 )
 
-const apiKey = "eIxc3dSmud2vuJRKiq9hJ6wORVWfoLxp1nqb4qXz"
-
 type TelemetryClient interface {
 	Enqueue(event string, properties map[string]any)
 	Publish(ctx context.Context) (int, error)
@@ -27,8 +25,6 @@ type TelemetryClientImpl struct {
 	telemetry configuration.TelemetrySetting
 	records   []Record
 }
-
-const telemetryUrl = "https://api.docker.com/events/v1/track"
 
 func NewClient() TelemetryClient {
 	return &TelemetryClientImpl{telemetry: configuration.TelemetrySettingAll}
@@ -85,7 +81,7 @@ func (c *TelemetryClientImpl) trimRecords() []Record {
 }
 
 func (c *TelemetryClientImpl) Publish(ctx context.Context) (int, error) {
-	if os.Getenv("DOCKER_LANGUAGE_SERVER_TELEMETRY") == "false" {
+	if os.Getenv("DOCKER_LANGUAGE_SERVER_TELEMETRY") == "false" || metadata.TelemetryEndpoint == "" || metadata.TelemetryKey == "" {
 		c.records = nil
 		return 0, nil
 	}
@@ -102,14 +98,14 @@ func (c *TelemetryClientImpl) Publish(ctx context.Context) (int, error) {
 		return 0, fmt.Errorf("failed to marshal telemetry payload: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, telemetryUrl, bytes.NewBuffer(b))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, metadata.TelemetryEndpoint, bytes.NewBuffer(b))
 	if err != nil {
 		return 0, fmt.Errorf("failed to create telemetry request: %w", err)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", fmt.Sprintf("docker-language-server/v%v", metadata.Version))
-	req.Header.Set("x-api-key", apiKey)
+	req.Header.Set("x-api-key", metadata.TelemetryKey)
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return 0, fmt.Errorf("failed to send telemetry request: %w", err)
