@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/docker/docker-language-server/internal/configuration"
 	"github.com/docker/docker-language-server/internal/pkg/cli/metadata"
+	"github.com/dromara/carbon/v2"
 )
 
 type TelemetryClient interface {
@@ -61,7 +61,7 @@ func (c *TelemetryClientImpl) Enqueue(event string, properties map[string]any) {
 			Event:      event,
 			Source:     "editor_integration",
 			Properties: properties,
-			Timestamp:  int64(time.Now().UnixMilli()),
+			Timestamp:  carbon.Now().TimestampMilli(),
 		})
 	}
 }

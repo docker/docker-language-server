@@ -8,12 +8,12 @@ import (
 	"runtime"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/docker/docker-language-server/internal/hub"
 	"github.com/docker/docker-language-server/internal/pkg/document"
 	"github.com/docker/docker-language-server/internal/tliron/glsp/protocol"
 	"github.com/docker/docker-language-server/internal/types"
+	"github.com/dromara/carbon/v2"
 	"github.com/stretchr/testify/require"
 	"go.lsp.dev/uri"
 )
@@ -2861,7 +2861,7 @@ services:
 		},
 	}
 
-	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), time.Now().UnixMilli()))
+	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), carbon.Now().TimestampMilli()))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, os.RemoveAll(dir))
@@ -4615,7 +4615,7 @@ services:
 }
 
 func TestCompletion_NoResultExpected(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), time.Now().UnixMilli()))
+	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), carbon.Now().TimestampMilli()))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, os.RemoveAll(dir))
@@ -4749,7 +4749,7 @@ services:
 }
 
 func TestCompletion_VolumeFolderListing(t *testing.T) {
-	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), time.Now().UnixMilli()))
+	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), carbon.Now().TimestampMilli()))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, os.RemoveAll(dir))
@@ -5548,7 +5548,7 @@ func textEdit(newText string, line, character, prefixLength protocol.UInteger) p
 }
 
 func createFileStructure(t *testing.T) string {
-	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), time.Now().UnixMilli()))
+	dir, err := os.MkdirTemp(os.TempDir(), fmt.Sprintf("%v-%v", t.Name(), carbon.Now().TimestampMilli()))
 	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, os.RemoveAll(dir))
