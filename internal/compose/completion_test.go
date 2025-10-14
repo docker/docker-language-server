@@ -1644,6 +1644,14 @@ services:
 						InsertTextFormat: types.CreateInsertTextFormatPointer(protocol.InsertTextFormatSnippet),
 					},
 					{
+						Label:            "initial_sync",
+						Detail:           types.CreateStringPointer("boolean"),
+						Documentation:    "Ensure that an initial synchronization is done before starting watch mode for sync+x triggers",
+						TextEdit:         textEdit("initial_sync: ${1|true,false|}", 5, 10, 0),
+						InsertTextMode:   types.CreateInsertTextModePointer(protocol.InsertTextModeAsIs),
+						InsertTextFormat: types.CreateInsertTextFormatPointer(protocol.InsertTextFormatSnippet),
+					},
+					{
 						Label:            "path",
 						Detail:           types.CreateStringPointer("string"),
 						Documentation:    "Path to watch for changes.",
@@ -4624,7 +4632,7 @@ func TestCompletion_NoResultExpected(t *testing.T) {
 	}
 	for _, entry := range fileStructure {
 		if entry.isDir {
-			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0755))
+			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0o755))
 		} else {
 			f, err := os.Create(filepath.Join(dir, entry.name))
 			require.NoError(t, err)
@@ -4758,7 +4766,7 @@ func TestCompletion_VolumeFolderListing(t *testing.T) {
 	}
 	for _, entry := range fileStructure {
 		if entry.isDir {
-			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0755))
+			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0o755))
 		} else {
 			f, err := os.Create(filepath.Join(dir, entry.name))
 			require.NoError(t, err)
@@ -5557,7 +5565,7 @@ func createFileStructure(t *testing.T) string {
 	}
 	for _, entry := range fileStructure {
 		if entry.isDir {
-			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0755))
+			require.NoError(t, os.Mkdir(filepath.Join(dir, entry.name), 0o755))
 		} else {
 			f, err := os.Create(filepath.Join(dir, entry.name))
 			require.NoError(t, err)

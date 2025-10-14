@@ -2,6 +2,11 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+- Compose
+  - update schema to the latest version
+
 ## [0.19.0] - 2025-09-16
 
 ### Added
