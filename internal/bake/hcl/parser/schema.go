@@ -198,7 +198,31 @@ var BakeSchema = &schema.BodySchema{
 					},
 					"output": {
 						IsOptional: true,
-						Constraint: schema.List{Elem: schema.AnyExpression{OfType: cty.String}},
+						Constraint: schema.OneOf{
+							schema.List{Elem: schema.AnyExpression{OfType: cty.String}},
+							schema.List{Elem: schema.Object{
+								Attributes: schema.ObjectAttributes{
+									"type": &schema.AttributeSchema{
+										Constraint: schema.OneOf{
+											schema.LiteralValue{Value: cty.StringVal("local")},
+											schema.LiteralValue{Value: cty.StringVal("tar")},
+											schema.LiteralValue{Value: cty.StringVal("oci")},
+											schema.LiteralValue{Value: cty.StringVal("docker")},
+											schema.LiteralValue{Value: cty.StringVal("image")},
+											schema.LiteralValue{Value: cty.StringVal("registry")},
+										},
+									},
+									"attrs": &schema.AttributeSchema{
+										IsOptional: true,
+										Constraint: schema.Map{Elem: schema.LiteralType{Type: cty.String}},
+									},
+									"dest": &schema.AttributeSchema{
+										IsOptional: true,
+										Constraint: schema.LiteralType{Type: cty.String},
+									},
+								},
+							}},
+						},
 					},
 					"platforms": {
 						IsOptional: true,

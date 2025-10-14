@@ -2,7 +2,16 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Bake
+  - correct the schema for the `output` attribute of the `target` block so that the list can also contain objects instead of only strings ([#77](https://github.com/docker/docker-language-server/issues/77))
+
 ## [0.20.0] - 2025-10-14
+
+### Added
 
 - Compose
   - update schema to the latest version
