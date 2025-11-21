@@ -2,6 +2,13 @@
 
 All notable changes to the Docker Language Server will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+
+- Bake
+  - fix parsing error caused by referencing a variable with no value ([#490](https://github.com/docker/docker-language-server/issues/490))
+
 ## [0.20.1] - 2025-10-14
 
 ### Fixed
