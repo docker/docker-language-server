@@ -391,7 +391,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Image vulnerabilities:   0C   0H   2M   5L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>25.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  2M</td><td align=\"right\">  4L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Image vulnerabilities:   0C   0H   2M   5L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>26.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  2M</td><td align=\"right\">  4L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
@@ -407,7 +407,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Recommended tags:\n\n<table>\n<tr><td><code>25.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  2M</td><td align=\"right\">  4L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Recommended tags:\n\n<table>\n<tr><td><code>26.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  2M</td><td align=\"right\">  4L</td><td align=\"right\"></td></tr>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
