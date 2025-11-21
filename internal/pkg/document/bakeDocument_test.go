@@ -224,3 +224,33 @@ func TestDockerfileForTarget(t *testing.T) {
 		})
 	}
 }
+
+func TestNewBakeHCLDocument(t *testing.T) {
+	temporaryBakeFile := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(t.TempDir(), "docker-bake.hcl")), "/"))
+	temporaryBakeFileURI := uri.URI(temporaryBakeFile)
+
+	testCases := []struct {
+		name    string
+		content string
+	}{
+		{
+			name: "reference typed variable with no value",
+			content: `variable "CI" {
+  type = string
+}
+
+variable "foo" {
+  type = bool
+  default = CI
+}`,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			doc := NewBakeHCLDocument(temporaryBakeFileURI, 1, []byte(tc.content))
+			_, ok := doc.File().Body.(*hclsyntax.Body)
+			require.True(t, ok)
+		})
+	}
+}
