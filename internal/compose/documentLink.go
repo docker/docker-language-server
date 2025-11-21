@@ -18,7 +18,7 @@ import (
 
 func createRange(t *token.Token, length int) protocol.Range {
 	offset := 0
-	if t.Type == token.DoubleQuoteType {
+	if t.Type == token.DoubleQuoteType || t.Type == token.SingleQuoteType {
 		offset = 1
 	}
 	return protocol.Range{

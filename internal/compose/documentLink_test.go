@@ -118,10 +118,58 @@ func TestDocumentLink_IncludedFiles(t *testing.T) {
 			},
 		},
 		{
+			name: "included files, string array with single quotes",
+			content: `include:
+  - file.yml
+  - 'file2.yml'`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 1, Character: 4},
+						End:   protocol.Position{Line: 1, Character: 12},
+					},
+					Target:  documentLinkTarget(testsFolder, "file.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file.yml"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 2, Character: 5},
+						End:   protocol.Position{Line: 2, Character: 14},
+					},
+					Target:  documentLinkTarget(testsFolder, "file2.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file2.yml"),
+				},
+			},
+		},
+		{
 			name: "included files, path as a string",
 			content: `include:
   - path: file.yml
   - path: "file2.yml"`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 1, Character: 10},
+						End:   protocol.Position{Line: 1, Character: 18},
+					},
+					Target:  documentLinkTarget(testsFolder, "file.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file.yml"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 2, Character: 11},
+						End:   protocol.Position{Line: 2, Character: 20},
+					},
+					Target:  documentLinkTarget(testsFolder, "file2.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file2.yml"),
+				},
+			},
+		},
+		{
+			name: "included files, path as a string with single quotes",
+			content: `include:
+  - path: file.yml
+  - path: 'file2.yml'`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
@@ -231,6 +279,34 @@ services:
 include:
   - file.yml
   - "file2.yml"`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 5, Character: 4},
+						End:   protocol.Position{Line: 5, Character: 12},
+					},
+					Target:  documentLinkTarget(testsFolder, "file.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file.yml"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 6, Character: 5},
+						End:   protocol.Position{Line: 6, Character: 14},
+					},
+					Target:  documentLinkTarget(testsFolder, "file2.yml"),
+					Tooltip: documentLinkTooltip(testsFolder, "file2.yml"),
+				},
+			},
+		},
+		{
+			name: "regular file with single quotes",
+			content: `
+services:
+  backend:
+
+include:
+  - file.yml
+  - 'file2.yml'`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
@@ -401,12 +477,30 @@ include:
 			name: "env_file string attribute",
 			content: `
 include:
-  - env_file: .env`,
+  - env_file: .env
+  - env_file: '.env'
+  - env_file: ".env"`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
 						Start: protocol.Position{Line: 2, Character: 14},
 						End:   protocol.Position{Line: 2, Character: 18},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 15},
+						End:   protocol.Position{Line: 3, Character: 19},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 4, Character: 15},
+						End:   protocol.Position{Line: 4, Character: 19},
 					},
 					Target:  documentLinkTarget(testsFolder, ".env"),
 					Tooltip: documentLinkTooltip(testsFolder, ".env"),
@@ -441,12 +535,30 @@ include:
 			content: `
 include:
   - env_file:
-    - .env`,
+    - .env
+    - '.env'
+    - ".env"`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
 						Start: protocol.Position{Line: 3, Character: 6},
 						End:   protocol.Position{Line: 3, Character: 10},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 4, Character: 7},
+						End:   protocol.Position{Line: 4, Character: 11},
+					},
+					Target:  documentLinkTarget(testsFolder, ".env"),
+					Tooltip: documentLinkTooltip(testsFolder, ".env"),
+				},
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 5, Character: 7},
+						End:   protocol.Position{Line: 5, Character: 11},
 					},
 					Target:  documentLinkTarget(testsFolder, ".env"),
 					Tooltip: documentLinkTooltip(testsFolder, ".env"),
@@ -514,11 +626,28 @@ services:
 			},
 		},
 		{
-			name: "quoted string",
+			name: "double quoted string",
 			content: `
 services:
   test:
     image: "alpine"`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 12},
+						End:   protocol.Position{Line: 3, Character: 18},
+					},
+					Target:  types.CreateStringPointer("https://hub.docker.com/_/alpine"),
+					Tooltip: types.CreateStringPointer("https://hub.docker.com/_/alpine"),
+				},
+			},
+		},
+		{
+			name: "single quoted string",
+			content: `
+services:
+  test:
+    image: 'alpine'`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
@@ -707,6 +836,14 @@ services:
 			links: []protocol.DocumentLink{},
 		},
 		{
+			name: "image: 'ghcr.io:'",
+			content: `
+services:
+  test:
+    image: 'ghcr.io:tag'`,
+			links: []protocol.DocumentLink{},
+		},
+		{
 			name: "image: mcr.microsoft.com/powershell",
 			content: `
 services:
@@ -839,6 +976,14 @@ services:
 			links: []protocol.DocumentLink{},
 		},
 		{
+			name: "image: 'mcr.microsoft.com:'",
+			content: `
+services:
+  test:
+    image: 'mcr.microsoft.com:'`,
+			links: []protocol.DocumentLink{},
+		},
+		{
 			name: "image: quay.io/prometheus/node-exporter",
 			content: `
 services:
@@ -934,6 +1079,14 @@ services:
 services:
   test:
     image: "quay.io:"`,
+			links: []protocol.DocumentLink{},
+		},
+		{
+			name: "image: 'quay.io:'",
+			content: `
+services:
+  test:
+    image: 'quay.io:'`,
 			links: []protocol.DocumentLink{},
 		},
 		{
@@ -1135,6 +1288,19 @@ services:
 			},
 		},
 		{
+			name: `'./Dockerfile2'`,
+			content: `
+services:
+  test:
+    build:
+      dockerfile: './Dockerfile2'`,
+			path: filepath.Join(testsFolder, "Dockerfile2"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 19},
+				End:   protocol.Position{Line: 4, Character: 32},
+			},
+		},
+		{
 			name: "anchors and aliases to nothing",
 			content: `
 services:
@@ -1302,6 +1468,19 @@ services:
   test:
     credential_spec:
       file: "./credential-spec.json"`,
+			path: filepath.Join(testsFolder, "credential-spec.json"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 13},
+				End:   protocol.Position{Line: 4, Character: 35},
+			},
+		},
+		{
+			name: `'./credential-spec.json'`,
+			content: `
+services:
+  test:
+    credential_spec:
+      file: './credential-spec.json'`,
 			path: filepath.Join(testsFolder, "credential-spec.json"),
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 4, Character: 13},
@@ -1481,11 +1660,23 @@ services:
 			},
 		},
 		{
-			name: "quoted string value \"./.env\"",
+			name: "double quoted string value \"./.env\"",
 			content: `
 services:
   test:
     env_file: "./.env"`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 15},
+				End:   protocol.Position{Line: 3, Character: 21},
+			},
+		},
+		{
+			name: "single quoted string value './.env'",
+			content: `
+services:
+  test:
+    env_file: './.env'`,
 			path: filepath.Join(testsFolder, "./.env"),
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 3, Character: 15},
@@ -1500,7 +1691,7 @@ services:
     env_file: null`,
 		},
 		{
-			name: "array items",
+			name: "array item as a string",
 			content: `
 services:
   test:
@@ -1510,6 +1701,32 @@ services:
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 4, Character: 8},
 				End:   protocol.Position{Line: 4, Character: 14},
+			},
+		},
+		{
+			name: "array item as a double quoted string",
+			content: `
+services:
+  test:
+    env_file:
+      - "./.env"`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 9},
+				End:   protocol.Position{Line: 4, Character: 15},
+			},
+		},
+		{
+			name: "array item as a single quoted string",
+			content: `
+services:
+  test:
+    env_file:
+      - './.env'`,
+			path: filepath.Join(testsFolder, "./.env"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 9},
+				End:   protocol.Position{Line: 4, Character: 15},
 			},
 		},
 		{
@@ -1671,7 +1888,7 @@ func TestDocumentLink_ServiceExtendsFileLinks(t *testing.T) {
 		linkRange protocol.Range
 	}{
 		{
-			name: "no anchors",
+			name: "string value",
 			content: `
 services:
   test2:
@@ -1682,6 +1899,34 @@ services:
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 5, Character: 12},
 				End:   protocol.Position{Line: 5, Character: 32},
+			},
+		},
+		{
+			name: "string value in single quotes",
+			content: `
+services:
+  test2:
+    extends:
+      service: test
+      file: './compose.other.yaml'`,
+			path: filepath.Join(testsFolder, "compose.other.yaml"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 13},
+				End:   protocol.Position{Line: 5, Character: 33},
+			},
+		},
+		{
+			name: "string value in double quotes",
+			content: `
+services:
+  test2:
+    extends:
+      service: test
+      file: "./compose.other.yaml"`,
+			path: filepath.Join(testsFolder, "compose.other.yaml"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 5, Character: 13},
+				End:   protocol.Position{Line: 5, Character: 33},
 			},
 		},
 		{
@@ -1821,6 +2066,7 @@ services:
 		})
 	}
 }
+
 func TestDocumentLink_ServiceLabelFileLinks(t *testing.T) {
 	testsFolder := filepath.Join(os.TempDir(), t.Name())
 	composeStringURI := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(testsFolder, "compose.yaml")), "/"))
@@ -1861,6 +2107,18 @@ services:
 services:
   test:
     label_file: "./app.labels"`,
+			path: filepath.Join(testsFolder, "./app.labels"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 17},
+				End:   protocol.Position{Line: 3, Character: 29},
+			},
+		},
+		{
+			name: "single quoted string value './app.labels'",
+			content: `
+services:
+  test:
+    label_file: './app.labels'`,
 			path: filepath.Join(testsFolder, "./app.labels"),
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 3, Character: 17},
@@ -2066,6 +2324,32 @@ services:
 			},
 		},
 		{
+			name: "mount local file (string in single quotes)",
+			content: `
+services:
+  test:
+    volumes:
+      - './a.txt:/mount/a.txt'`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 9},
+				End:   protocol.Position{Line: 4, Character: 16},
+			},
+		},
+		{
+			name: "mount local file (string in double quotes)",
+			content: `
+services:
+  test:
+    volumes:
+      - "./a.txt:/mount/a.txt"`,
+			path: filepath.Join(testsFolder, "./a.txt"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 4, Character: 9},
+				End:   protocol.Position{Line: 4, Character: 16},
+			},
+		},
+		{
 			name: "mount local file (string is anchored)",
 			content: `
 services:
@@ -2267,6 +2551,18 @@ configs:
 			},
 		},
 		{
+			name: `'./httpd.conf'`,
+			content: `
+configs:
+  test:
+    file: './httpd.conf'`,
+			path: filepath.Join(testsFolder, "httpd.conf"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 11},
+				End:   protocol.Position{Line: 3, Character: 23},
+			},
+		},
+		{
 			name: "anchors and aliases to nothing",
 			content: `
 configs:
@@ -2387,6 +2683,18 @@ secrets:
 secrets:
   test:
     file: "./server.cert"`,
+			path: filepath.Join(testsFolder, "server.cert"),
+			linkRange: protocol.Range{
+				Start: protocol.Position{Line: 3, Character: 11},
+				End:   protocol.Position{Line: 3, Character: 24},
+			},
+		},
+		{
+			name: `'./server.cert'`,
+			content: `
+secrets:
+  test:
+    file: './server.cert'`,
 			path: filepath.Join(testsFolder, "server.cert"),
 			linkRange: protocol.Range{
 				Start: protocol.Position{Line: 3, Character: 11},
@@ -2544,11 +2852,45 @@ models:
 			},
 		},
 		{
+			name: "'ai/llama3.3'",
+			content: `
+models:
+  modelA:
+    model: 'ai/llama3.3'`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 12},
+						End:   protocol.Position{Line: 3, Character: 23},
+					},
+					Target:  types.CreateStringPointer("https://hub.docker.com/r/ai/llama3.3"),
+					Tooltip: types.CreateStringPointer("https://hub.docker.com/r/ai/llama3.3"),
+				},
+			},
+		},
+		{
 			name: "\"ai/llama3.3:\"",
 			content: `
 models:
   modelA:
     model: "ai/llama3.3:"`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 12},
+						End:   protocol.Position{Line: 3, Character: 23},
+					},
+					Target:  types.CreateStringPointer("https://hub.docker.com/r/ai/llama3.3"),
+					Tooltip: types.CreateStringPointer("https://hub.docker.com/r/ai/llama3.3"),
+				},
+			},
+		},
+		{
+			name: "'ai/llama3.3:'",
+			content: `
+models:
+  modelA:
+    model: 'ai/llama3.3:'`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
@@ -2612,11 +2954,45 @@ models:
 			},
 		},
 		{
+			name: "'hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF'",
+			content: `
+models:
+  modelA:
+    model: 'hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF'`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 12},
+						End:   protocol.Position{Line: 3, Character: 54},
+					},
+					Target:  types.CreateStringPointer("https://hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF"),
+					Tooltip: types.CreateStringPointer("https://hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF"),
+				},
+			},
+		},
+		{
 			name: "\"hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:\"",
 			content: `
 models:
   modelA:
     model: "hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:"`,
+			links: []protocol.DocumentLink{
+				{
+					Range: protocol.Range{
+						Start: protocol.Position{Line: 3, Character: 12},
+						End:   protocol.Position{Line: 3, Character: 54},
+					},
+					Target:  types.CreateStringPointer("https://hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF"),
+					Tooltip: types.CreateStringPointer("https://hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF"),
+				},
+			},
+		},
+		{
+			name: "'hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:'",
+			content: `
+models:
+  modelA:
+    model: 'hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:'`,
 			links: []protocol.DocumentLink{
 				{
 					Range: protocol.Range{
@@ -2642,6 +3018,14 @@ models:
 models:
   modelA:
     model: "hf.co:"`,
+			links: []protocol.DocumentLink{},
+		},
+		{
+			name: "'hf.co:'",
+			content: `
+models:
+  modelA:
+    model: 'hf.co:'`,
 			links: []protocol.DocumentLink{},
 		},
 		{
