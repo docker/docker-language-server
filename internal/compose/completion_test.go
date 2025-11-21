@@ -5509,6 +5509,26 @@ services:
 			character: 15,
 			list:      nil,
 		},
+		{
+			name: "single quoted completion with whitespace preceding the character position",
+			content: `
+services:
+  test:
+    image: ' '`,
+			line:      3,
+			character: 13,
+			list:      nil,
+		},
+		{
+			name: "double quoted completion with whitespace preceding the character position",
+			content: `
+services:
+  test:
+    image: " "`,
+			line:      3,
+			character: 13,
+			list:      nil,
+		},
 	}
 
 	dir := createFileStructure(t)
