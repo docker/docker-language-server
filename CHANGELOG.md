@@ -9,6 +9,8 @@ All notable changes to the Docker Language Server will be documented in this fil
 - Compose
   - textDocument/completion
     - check the prefix string before trying to use it for looking up image tags ([#486](https://github.com/docker/docker-language-server/issues/486))
+  - textDocument/documentLink
+    - correct the link range if the string is wrapped in single quotes ([#487](https://github.com/docker/docker-language-server/issues/487))
 - Bake
   - fix parsing error caused by referencing a variable with no value ([#490](https://github.com/docker/docker-language-server/issues/490))
 
