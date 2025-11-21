@@ -582,7 +582,7 @@ func buildTargetCompletionItems(params *protocol.CompletionParams, manager *docu
 }
 
 func serviceImageCompletionItems(hub hub.Service, path []*ast.MappingValueNode, prefix string) ([]protocol.CompletionItem, bool) {
-	if len(path) == 3 && path[0].Key.GetToken().Value == "services" && path[2].Key.GetToken().Value == "image" {
+	if len(path) == 3 && path[0].Key.GetToken().Value == "services" && path[2].Key.GetToken().Value == "image" && len(prefix) > 0 {
 		if path[2].Value.GetToken().Type == token.DoubleQuoteType || path[2].Value.GetToken().Type == token.SingleQuoteType {
 			prefix = prefix[1:]
 		}
