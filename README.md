@@ -35,7 +35,7 @@ The Docker Language Server relies on some features that are dependent on [Buildx
 
 ## Installing
 
-Ensure you have Go 1.24 or greater installed, check out this repository and then run `make install`. Alternatively, if you have Go installed then you can run `go install github.com/docker/docker-language-server/cmd/docker-language-server@latest` to get the latest version.
+Ensure you have Go 1.24 or greater installed, check out this repository and then run `make install`. Alternatively you can run `go install github.com/docker/docker-language-server/cmd/docker-language-server@latest` to get the latest version.
 
 ## Development
 
