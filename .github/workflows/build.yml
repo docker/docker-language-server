@@ -27,7 +27,7 @@ jobs:
         with:
           go-version: "1.25"
 
-      - uses: golangci/golangci-lint-action@v8
+      - uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20 # v9.2.0
         with:
           version: v2.4
 
@@ -42,7 +42,7 @@ jobs:
       -
         name: List targets
         id: generate
-        uses: docker/bake-action/subaction/list-targets@v6
+        uses: docker/bake-action/subaction/list-targets@82490499d2e5613fcead7e128237ef0b0ea210f7 # v7.0.0
         with:
           target: validate
 
@@ -183,7 +183,7 @@ jobs:
         run: |
           GOOS=${{ matrix.os }} GOARCH=${{ matrix.arch }} BUGSNAG_API_KEY=${{ secrets.BUGSNAG_API_KEY }} TELEMETRY_ENDPOINT=${{ vars.TELEMETRY_ENDPOINT }} TELEMETRY_KEY=${{ secrets.TELEMETRY_KEY }} make build
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }}
           path: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}${{ matrix.ext }}
