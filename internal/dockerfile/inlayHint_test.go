@@ -47,7 +47,7 @@ func TestInlayHint(t *testing.T) {
 			},
 			inlayHints: []protocol.InlayHint{
 				{
-					Label:       "(last pushed 1 year ago)",
+					Label:       "(last pushed 2 years ago)",
 					PaddingLeft: types.CreateBoolPointer(true),
 					Position:    protocol.Position{Line: 0, Character: 16},
 					Tooltip:     types.CreateAnyPointer("2024-01-27 00:47:58 UTC"),
@@ -90,7 +90,7 @@ func TestInlayHint(t *testing.T) {
 			},
 			inlayHints: []protocol.InlayHint{
 				{
-					Label:       "(last pushed 6 years ago)",
+					Label:       "(last pushed 7 years ago)",
 					PaddingLeft: types.CreateBoolPointer(true),
 					Position:    protocol.Position{Line: 0, Character: 27},
 					Tooltip:     types.CreateAnyPointer("2019-01-15 20:13:35 UTC"),
