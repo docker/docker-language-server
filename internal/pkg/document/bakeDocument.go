@@ -191,6 +191,7 @@ func (d *bakeHCLDocument) extractBakeOutput() {
 		nil,
 		nil,
 		nil,
+		nil,
 	)
 	if err != nil {
 		d.bakePrintOutput = nil
