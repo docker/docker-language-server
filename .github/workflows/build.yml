@@ -222,7 +222,7 @@ jobs:
         id: date
         run: echo "current_date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
-      - uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8 https://github.com/softprops/action-gh-release/commit/c062e08bd532815e2082a85e87e3ef29c3e6d191
+      - uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -278,7 +278,7 @@ jobs:
           path: docker-language-server-${{ matrix.os }}-${{ matrix.arch }}-v${{ steps.set-variables.outputs.VERSION }}${{ matrix.ext }}
           if-no-files-found: error
 
-      - uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8 https://github.com/softprops/action-gh-release/commit/c062e08bd532815e2082a85e87e3ef29c3e6d191
+      - uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
