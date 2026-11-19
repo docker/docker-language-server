@@ -314,14 +314,14 @@ func hover(schema *jsonschema.Schema, nodes []ast.Node, line, column, lineLength
 					}
 					slices.Sort(enumValues)
 					for _, value := range enumValues {
-						builder.WriteString(fmt.Sprintf("- `%v`\n", value))
+						fmt.Fprintf(&builder, "- `%v`\n", value)
 					}
 					builder.WriteString("\nSchema: [compose-spec.json](https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json)")
-					builder.WriteString(fmt.Sprintf(
+					fmt.Fprintf(&builder,
 						"\n\n[Online documentation](https://docs.docker.com/reference/compose-file/%v/#%v)",
 						nodes[0].GetToken().Value,
 						nodes[2].GetToken().Value,
-					))
+					)
 					return &protocol.Hover{
 						Contents: protocol.MarkupContent{
 							Kind:  protocol.MarkupKindMarkdown,
@@ -342,29 +342,29 @@ func hover(schema *jsonschema.Schema, nodes []ast.Node, line, column, lineLength
 					builder.WriteString("\n\n[Online documentation](https://docs.docker.com/reference/compose-file/version-and-name/)")
 				case "include":
 					if len(nodes) == 1 {
-						builder.WriteString(fmt.Sprintf(
+						fmt.Fprintf(&builder,
 							"\n\n[Online documentation](https://docs.docker.com/reference/compose-file/%v/)",
 							nodes[0].GetToken().Value,
-						))
+						)
 					} else {
-						builder.WriteString(fmt.Sprintf(
+						fmt.Fprintf(&builder,
 							"\n\n[Online documentation](https://docs.docker.com/reference/compose-file/%v/#%v)",
 							nodes[0].GetToken().Value,
 							nodes[1].GetToken().Value,
-						))
+						)
 					}
 				default:
 					if len(nodes) == 1 {
-						builder.WriteString(fmt.Sprintf(
+						fmt.Fprintf(&builder,
 							"\n\n[Online documentation](https://docs.docker.com/reference/compose-file/%v/)",
 							nodes[0].GetToken().Value,
-						))
+						)
 					} else {
-						builder.WriteString(fmt.Sprintf(
+						fmt.Fprintf(&builder,
 							"\n\n[Online documentation](https://docs.docker.com/reference/compose-file/%v/#%v)",
 							nodes[0].GetToken().Value,
 							nodes[2].GetToken().Value,
-						))
+						)
 					}
 				}
 				return &protocol.Hover{

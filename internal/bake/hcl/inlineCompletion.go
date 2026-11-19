@@ -115,13 +115,13 @@ func InlineCompletion(ctx context.Context, params *protocol.InlineCompletionPara
 		lines := strings.Split(string(bakeDocument.Input()), "\n")
 		for _, target := range targets {
 			sb := strings.Builder{}
-			sb.WriteString(fmt.Sprintf("target \"%v\" {\n", target))
-			sb.WriteString(fmt.Sprintf("  target = \"%v\"\n", target))
+			fmt.Fprintf(&sb, "target \"%v\" {\n", target)
+			fmt.Fprintf(&sb, "  target = \"%v\"\n", target)
 
 			if len(args) > 0 {
 				sb.WriteString("  args = {\n")
 				for _, argName := range argNames {
-					sb.WriteString(fmt.Sprintf("    %v = \"%v\"\n", argName, args[argName]))
+					fmt.Fprintf(&sb, "    %v = \"%v\"\n", argName, args[argName])
 				}
 				sb.WriteString("  }\n")
 			}

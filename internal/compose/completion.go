@@ -878,7 +878,7 @@ func insertText(spacing, attributeName string, schema *jsonschema.Schema) string
 					}
 					sb.WriteString(requiredAttribute)
 					if len(required) != 1 {
-						sb.WriteString(fmt.Sprintf("${%v}", i+1))
+						fmt.Fprintf(&sb, "${%v}", i+1)
 					}
 				}
 				return sb.String()
