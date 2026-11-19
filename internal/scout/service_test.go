@@ -343,7 +343,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Current image vulnerabilities:   1C   3H   9M   0L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>3.21.7</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.20.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.23.4</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.22.4</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Current image vulnerabilities:   1C   3H   9M   0L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>3.21.10</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.23.8</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.22.8</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
@@ -359,7 +359,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Recommended tags:\n\n<table>\n<tr><td><code>3.21.7</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.20.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.23.4</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.22.4</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Recommended tags:\n\n<table>\n<tr><td><code>3.21.10</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.23.8</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>3.22.8</code></td><td align=\"right\">  1C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
@@ -391,7 +391,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Image vulnerabilities:   0C   0H   1M   2L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Image vulnerabilities:   0C   0H  20M   3L \r\n\r\nRecommended tags:\n\n<table>\n<tr><td><code>26.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>26.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
@@ -407,7 +407,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Recommended tags:\n\n<table>\n<tr><td><code>25.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  0M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
+					Value: "Recommended tags:\n\n<table>\n<tr><td><code>26.10</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n<tr><td><code>26.04</code></td><td align=\"right\">  0C</td><td align=\"right\">  0H</td><td align=\"right\">  1M</td><td align=\"right\">  0L</td><td align=\"right\"></td></tr>\n</table>\n",
 				},
 			},
 		},
@@ -423,7 +423,7 @@ func TestGetHovers_IgnoresSpecifics(t *testing.T) {
 			result: &protocol.Hover{
 				Contents: protocol.MarkupContent{
 					Kind:  protocol.MarkupKindMarkdown,
-					Value: "Image vulnerabilities:   0C   0H   1M   2L ",
+					Value: "Image vulnerabilities:   0C   0H  20M   3L ",
 				},
 			},
 		},
