@@ -418,6 +418,16 @@ services:
 			character: 4,
 			result:    nil,
 		},
+		{
+			// an unknown top-level attribute leaves the schema at the root, so
+			// a nested key that shares a name with a root attribute matches
+			name: "root attribute name nested under an unknown attribute",
+			content: `unknown:
+  services:`,
+			line:      1,
+			character: 4,
+			result:    nil,
+		},
 	}
 
 	composeFile := fmt.Sprintf("file:///%v", strings.TrimPrefix(filepath.ToSlash(filepath.Join(os.TempDir(), "compose.yaml")), "/"))

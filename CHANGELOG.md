@@ -11,6 +11,8 @@ All notable changes to the Docker Language Server will be documented in this fil
     - check the prefix string before trying to use it for looking up image tags ([#486](https://github.com/docker/docker-language-server/issues/486))
   - textDocument/documentLink
     - correct the link range if the string is wrapped in single quotes ([#487](https://github.com/docker/docker-language-server/issues/487))
+  - textDocument/hover
+    - ignore unrecognized nodes instead of proceeding and trying to render a hover for them ([#509](https://github.com/docker/docker-language-server/issues/509))
 - Bake
   - fix parsing error caused by referencing a variable with no value ([#490](https://github.com/docker/docker-language-server/issues/490))
 

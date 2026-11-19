@@ -378,6 +378,7 @@ func hover(schema *jsonschema.Schema, nodes []ast.Node, line, column, lineLength
 			continue
 		}
 
+		matched := false
 		for regexp, property := range schema.PatternProperties {
 			if regexp.MatchString(match.GetToken().Value) {
 				if property.Ref == nil {
@@ -385,8 +386,14 @@ func hover(schema *jsonschema.Schema, nodes []ast.Node, line, column, lineLength
 				} else {
 					schema = property.Ref
 				}
+				matched = true
 				break
 			}
+		}
+
+		if !matched {
+			// the node does not appear to be described by the schema
+			return nil
 		}
 	}
 	return nil
