@@ -57,7 +57,7 @@ func TestCollectDiagnostics(t *testing.T) {
 			content: "target \"t1\" {\n  tags = [ \"alpine:3.17.0\" ]\n}",
 			diagnostics: []protocol.Diagnostic{
 				{
-					Message:  "The image contains 1 critical and 12 high vulnerabilities",
+					Message:  "The image contains 3 critical and 11 high vulnerabilities",
 					Source:   types.CreateStringPointer("docker-language-server"),
 					Severity: types.CreateDiagnosticSeverityPointer(protocol.DiagnosticSeverityWarning),
 					Code:     &protocol.IntegerOrString{Value: "critical_high_vulnerabilities"},
